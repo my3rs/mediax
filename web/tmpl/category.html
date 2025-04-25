@@ -8,8 +8,24 @@
 {{ end }}
 <main>
     <div class="page-heading">
-        <div class="page-title"><a class="no-color" href="/{{.Category}}">{{ .PageTitle }}</a> ({{ .StatusCounts.All }})</div>
-        <div class="page-func"><a href="/add?subject_type={{ .Category }}">添加{{ .PageTitle }}+</a></div>
+        <div class="page-title">
+            <img src="/static/icons/icon-{{ .Category }}.svg" alt="movie" width="28" height="28">
+            <a class="no-color" href="/{{.Category}}">{{ .PageTitle }} ({{ .StatusCounts.All }})</a>
+            <a class="no-color" href="/add?subject_type={{ .Category }}">
+                <svg xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd" viewBox="0 0 24 24" width="24px" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="var(--sec-note-color)"><path d="m17.5 11c2.484 0 4.5 2.016 4.5 4.5s-2.016 4.5-4.5 4.5-4.5-2.016-4.5-4.5 2.016-4.5 4.5-4.5zm.5 4v-1.5c0-.265-.235-.5-.5-.5s-.5.235-.5.5v1.5h-1.5c-.265 0-.5.235-.5.5s.235.5.5.5h1.5v1.5c0 .265.235.5.5.5s.5-.235.5-.5c0-.592 0-1.5 0-1.5h1.5c.265 0 .5-.235.5-.5s-.235-.5-.5-.5c-.592 0-1.5 0-1.5 0zm-6.479 1c.043.522.153 1.025.321 1.5h-9.092c-.414 0-.75-.336-.75-.75s.336-.75.75-.75zm1.106-4c-.328.456-.594.96-.785 1.5h-9.092c-.414 0-.75-.336-.75-.75s.336-.75.75-.75zm7.373-3.25c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75zm0-4c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75z" fill-rule="nonzero"/></svg>
+            </a>
+        </div>
+        <div class="page-func">
+            <form method="get">
+              <label for="sort_by">排序: </label>
+              <select class="sort-select" name="sort_by" onchange="this.form.submit()">
+                <option value="added_desc">最近添加</option>
+                <option value="marked_desc">最近标记</option>
+                <option value="added_asc">最久添加</option>
+                <option value="marked_asc">最久标记</option>
+              </select>
+            </form>
+        </div>
     </div>
     <div class="subject-status-filter">
         <li><a href="/{{.Category}}?status=1" class="{{ if eq .Status 1 }}active{{ end }}">{{ printf "想%s" $statusType }}</a>({{ .StatusCounts.Todo }})</li>

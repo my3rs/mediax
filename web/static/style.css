@@ -200,7 +200,15 @@ main {
 
 .page-title {
     font-size: 24px;
-    font-weight: 600
+    font-weight: 600;
+    display: flex;
+    column-gap: 10px;
+    align-items: center
+}
+
+.page-title svg {
+    vertical-align: middle;
+    display: inline-block
 }
 
 .note-color {
@@ -581,14 +589,13 @@ a.subject-outlink {
     box-shadow: var(--box-shadow-large)
 }
 
-.search-select {
+.search-select,
+.sort-select {
     min-width: 40px;
     margin-right: 10px;
     padding: 0;
     border: none;
     border-radius: 0;
-    visibility: hidden;
-    opacity: 0;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -598,6 +605,17 @@ a.subject-outlink {
     background-position: right center;
     background-size: 8px 4px;
     transition: all 0.25s var(--transition-effect);
+    cursor: pointer
+}
+
+.search-select {
+    min-width: 40px;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.sort-select {
+    min-width: 70px;
 }
 
 .search-bar:hover .search-select {
