@@ -226,3 +226,28 @@ func getExternalURLIcon(externalURL string) template.HTML {
 		return template.HTML(fmt.Sprintf(`<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>`, externalURL, externalURL))
 	}
 }
+
+func generatePageNumbers(current, total int) []int {
+	if total <= 1 {
+		return nil
+	}
+
+	var pages []int
+	start := current - 2
+	if start < 1 {
+		start = 1
+	}
+	end := start + 4
+	if end > total {
+		end = total
+		start = end - 4
+		if start < 1 {
+			start = 1
+		}
+	}
+	for i := start; i <= end; i++ {
+		pages = append(pages, i)
+	}
+
+	return pages
+}

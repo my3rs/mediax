@@ -51,6 +51,7 @@ type CategoryView struct {
 	SortBy       int
 	CurrentPage  int
 	TotalPages   int
+	PageNumbers  []int
 	PageParams   template.URL
 	Subjects     []CategoryViewItem
 }

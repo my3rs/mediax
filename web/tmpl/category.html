@@ -4,8 +4,8 @@
         <div class="page-title">
             <img src="/static/icons/icon-{{ .Category }}.svg" alt="{{ .Category }}" width="28" height="28">
             <a class="no-color" href="/{{ .Category }}">{{ .PageTitle }} ({{ .StatusCounts.All }})</a>
-            <a class="no-color" href="/add?subject_type={{ .Category }}">
-                <svg xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd" viewBox="0 0 24 24" width="24px" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="var(--sec-note-color)"><path d="m17.5 11c2.484 0 4.5 2.016 4.5 4.5s-2.016 4.5-4.5 4.5-4.5-2.016-4.5-4.5 2.016-4.5 4.5-4.5zm.5 4v-1.5c0-.265-.235-.5-.5-.5s-.5.235-.5.5v1.5h-1.5c-.265 0-.5.235-.5.5s.235.5.5.5h1.5v1.5c0 .265.235.5.5.5s.5-.235.5-.5c0-.592 0-1.5 0-1.5h1.5c.265 0 .5-.235.5-.5s-.235-.5-.5-.5c-.592 0-1.5 0-1.5 0zm-6.479 1c.043.522.153 1.025.321 1.5h-9.092c-.414 0-.75-.336-.75-.75s.336-.75.75-.75zm1.106-4c-.328.456-.594.96-.785 1.5h-9.092c-.414 0-.75-.336-.75-.75s.336-.75.75-.75zm7.373-3.25c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75zm0-4c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75z" fill-rule="nonzero"/></svg>
+            <a class="no-color" href="/add?subject_type={{ .Category }}" title="添加">
+                <svg xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd" viewBox="0 0 24 24" width="24" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="currentColor"><path d="M17.5 11c2.484 0 4.5 2.016 4.5 4.5S19.984 20 17.5 20 13 17.984 13 15.5s2.016-4.5 4.5-4.5zm.5 4v-1.5c0-.265-.235-.5-.5-.5s-.5.235-.5.5V15h-1.5c-.265 0-.5.235-.5.5s.235.5.5.5H17v1.5c0 .265.235.5.5.5s.5-.235.5-.5V16h1.5c.265 0 .5-.235.5-.5s-.235-.5-.5-.5H18zm-6.479 1c.043.522.153 1.025.321 1.5H2.75a.75.75 0 0 1 0-1.5zm1.106-4c-.328.456-.594.96-.785 1.5H2.75a.75.75 0 0 1 0-1.5zM20 8.75a.75.75 0 0 0-.75-.75H2.75a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 .75-.75zm0-4a.75.75 0 0 0-.75-.75H2.75a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 .75-.75z" fill-rule="nonzero"/></svg>
             </a>
         </div>
         <div class="page-func">
@@ -70,35 +70,43 @@
 
     {{ if gt .TotalPages 1 }}
     <div class="pagination">
-        {{ if gt .CurrentPage 1 }}
-        <a
-          href="?page={{ sub .CurrentPage 1 }}{{ .PageParams }}"
-          aria-label="Previous"
-        ><span>上一页</span></a>
-        {{ else }}
-        <span class="pagination-disable">上一页</span>
-        {{ end }}
 
-        <span class="pagination-number">
-          {{ .CurrentPage }} /
-          {{ if ne .CurrentPage .TotalPages }}
-          <a
-            href="?page={{ .TotalPages }}{{ .PageParams }}"
-            class="no-color"
-          >{{ .TotalPages }}</a>
-          {{ else }}
-          {{ .TotalPages }}
-          {{ end }}
+    {{ if gt .CurrentPage 1 }}
+        <a class="pagination-number padding-0" href="?page=1{{ .PageParams }}">首页</a>
+        <a class="pagination-number" href="?page={{ sub .CurrentPage 1 }}{{ .PageParams }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="currentColor"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
+        </a>
+    {{ else }}
+        <span class="pagination-disable padding-0">首页</span>
+        <span class="pagination-disable">
+            <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="var(--note-color)"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
         </span>
+    {{ end }}
 
-        {{ if lt .CurrentPage .TotalPages }}
-        <a
-          href="?page={{ add .CurrentPage 1 }}{{ .PageParams }}"
-          aria-label="Next"
-        ><span>下一页</span></a>
+    {{ range .PageNumbers }}
+        {{ if eq . $.CurrentPage }}
+        <span class="pagination-current">{{ . }}</span>
         {{ else }}
-        <span class="pagination-disable">下一页</span>
+        <a class="pagination-number" href="?page={{ . }}{{ $.PageParams }}">{{ . }}</a>
         {{ end }}
+    {{ end }}
+
+    {{ if lt .CurrentPage .TotalPages }}
+        <a class="pagination-number icon-mirror" href="?page={{ add .CurrentPage 1 }}{{ .PageParams }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="currentColor"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
+        </a>
+        <a class="pagination-number padding-0" href="?page={{ .TotalPages }}{{ .PageParams }}">尾页</a>
+    {{ else }}
+        <span class="pagination-disable icon-mirror">
+            <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="var(--note-color)"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
+        </span>
+        <span class="pagination-disable padding-0">尾页</span>
+    {{ end }}
+
+        <form method="get" class="pagination-jump" style="display: inline;">
+            <input type="text" inputmode="numeric" pattern="\d*" name="page" />
+            <span class="note-color">({{ .CurrentPage }} / {{ .TotalPages }})</span>
+        </form>
     </div>
     {{ end }}
 

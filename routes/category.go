@@ -94,6 +94,7 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 		SortBy:       sortBy,
 		CurrentPage:  page,
 		TotalPages:   totalPages,
+		PageNumbers:  generatePageNumbers(page, totalPages),
 		PageParams:   template.URL(pageParams),
 		Subjects:     processCategoryHTML(subjects),
 	}

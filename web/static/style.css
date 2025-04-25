@@ -183,6 +183,15 @@ header {
     margin: 50px auto
 }
 
+.padding-0 {
+    padding: 0 !important;
+}
+
+.note-color {
+    margin: 5px 0 !important;
+    color: var(--note-color) !important
+}
+
 .site-nav a {
     color: var(--nav-color);
     margin-right: 20px;
@@ -209,11 +218,6 @@ main {
 .page-title svg {
     vertical-align: middle;
     display: inline-block
-}
-
-.note-color {
-    margin: 5px 0;
-    color: var(--note-color)
 }
 
 .item-badge {
@@ -548,7 +552,28 @@ a.subject-outlink {
 .pagination {
     width: 100%;
     padding: 0;
-    margin: 50px 0
+    margin: 50px 0;
+    font-size: 15px;
+    color: var(--sec-note-color)
+}
+
+.pagination a {
+    color: var(--sec-note-color);
+}
+
+.pagination-number,
+.pagination-current,
+.pagination-disable {
+    padding: 5px 10px;
+}
+
+.pagination-text {
+    padding: 0
+}
+
+.pagination-current {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small)
 }
 
 .pagination-disable {
@@ -556,8 +581,17 @@ a.subject-outlink {
     user-select: none
 }
 
-.pagination-number {
-    margin: 0 15px
+.pagination-jump input {
+    margin-left: 15px;
+    width: 40px;
+    height: 30px
+}
+
+.icon-mirror svg {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
 }
 
 .search-box-container {
