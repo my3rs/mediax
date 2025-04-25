@@ -1,39 +1,36 @@
 {{ define "main" }}
-
-{{ $statusType := "看" }}
-{{ if eq .Category "book" }}
-    {{ $statusType = "读" }}
-{{ else if eq .Category "game" }}
-    {{ $statusType = "玩" }}
-{{ end }}
 <main>
     <div class="page-heading">
         <div class="page-title">
-            <img src="/static/icons/icon-{{ .Category }}.svg" alt="movie" width="28" height="28">
-            <a class="no-color" href="/{{.Category}}">{{ .PageTitle }} ({{ .StatusCounts.All }})</a>
+            <img src="/static/icons/icon-{{ .Category }}.svg" alt="{{ .Category }}" width="28" height="28">
+            <a class="no-color" href="/{{ .Category }}">{{ .PageTitle }} ({{ .StatusCounts.All }})</a>
             <a class="no-color" href="/add?subject_type={{ .Category }}">
                 <svg xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd" viewBox="0 0 24 24" width="24px" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="var(--sec-note-color)"><path d="m17.5 11c2.484 0 4.5 2.016 4.5 4.5s-2.016 4.5-4.5 4.5-4.5-2.016-4.5-4.5 2.016-4.5 4.5-4.5zm.5 4v-1.5c0-.265-.235-.5-.5-.5s-.5.235-.5.5v1.5h-1.5c-.265 0-.5.235-.5.5s.235.5.5.5h1.5v1.5c0 .265.235.5.5.5s.5-.235.5-.5c0-.592 0-1.5 0-1.5h1.5c.265 0 .5-.235.5-.5s-.235-.5-.5-.5c-.592 0-1.5 0-1.5 0zm-6.479 1c.043.522.153 1.025.321 1.5h-9.092c-.414 0-.75-.336-.75-.75s.336-.75.75-.75zm1.106-4c-.328.456-.594.96-.785 1.5h-9.092c-.414 0-.75-.336-.75-.75s.336-.75.75-.75zm7.373-3.25c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75zm0-4c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75z" fill-rule="nonzero"/></svg>
             </a>
         </div>
         <div class="page-func">
             <form method="get">
-              <label for="sort_by">排序: </label>
-              <select class="sort-select" name="sort_by" onchange="this.form.submit()">
-                <option value="added_desc">最近添加</option>
-                <option value="marked_desc">最近标记</option>
-                <option value="added_asc">最久添加</option>
-                <option value="marked_asc">最久标记</option>
-              </select>
+                <label for="sort_by">排序: </label>
+                <select class="sort-select" name="sort_by" onchange="this.form.submit()">
+                    <option value="1"{{ if eq .SortBy 1 }} selected{{ end }}>最近添加</option>
+                    <option value="2"{{ if eq .SortBy 2 }} selected{{ end }}>最近标记</option>
+                    <option value="3"{{ if eq .SortBy 3 }} selected{{ end }}>最早添加</option>
+                    <option value="4"{{ if eq .SortBy 4 }} selected{{ end }}>最早标记</option>
+                </select>
+                <input type="hidden" name="page"  value="{{ .CurrentPage }}">
+                <input type="hidden" name="status" value="{{ .Status }}">
             </form>
         </div>
     </div>
+
     <div class="subject-status-filter">
-        <li><a href="/{{.Category}}?status=1" class="{{ if eq .Status 1 }}active{{ end }}">{{ printf "想%s" $statusType }}</a>({{ .StatusCounts.Todo }})</li>
-        <li><a href="/{{.Category}}?status=2" class="{{ if eq .Status 2 }}active{{ end }}">{{ printf "在%s" $statusType }}</a>({{ .StatusCounts.Doing }})</li>
-        <li><a href="/{{.Category}}?status=3" class="{{ if eq .Status 3 }}active{{ end }}">{{ printf "%s过" $statusType }}</a>({{ .StatusCounts.Done }})</li>
+        <li><a href="/{{.Category}}?status=1" class="{{ if eq .Status 1 }}active{{ end }}">{{ printf "想%s" .StatusType }}</a>({{ .StatusCounts.Todo }})</li>
+        <li><a href="/{{.Category}}?status=2" class="{{ if eq .Status 2 }}active{{ end }}">{{ printf "在%s" .StatusType }}</a>({{ .StatusCounts.Doing }})</li>
+        <li><a href="/{{.Category}}?status=3" class="{{ if eq .Status 3 }}active{{ end }}">{{ printf "%s过" .StatusType }}</a>({{ .StatusCounts.Done }})</li>
         <li><a href="/{{.Category}}?status=4" class="{{ if eq .Status 4 }}active{{ end }}">搁置</a>({{ .StatusCounts.OnHold }})</li>
         <li><a href="/{{.Category}}?status=5" class="{{ if eq .Status 5 }}active{{ end }}">抛弃</a>({{ .StatusCounts.Dropped }})</li>
     </div>
+
     <ul class="subject-list">
         {{ range .Subjects }}
         <li class="subject-list-item">
@@ -70,27 +67,40 @@
         <div class="subject-list-null note-color"><i>暂无{{ .PageTitle }}。</i></div>
         {{ end }}
     </ul>
-    
+
     {{ if gt .TotalPages 1 }}
     <div class="pagination">
         {{ if gt .CurrentPage 1 }}
-        <a href="?{{ if ne .Status 0 }}status={{ .Status }}&{{ end }}page={{ sub .CurrentPage 1 }}" aria-label="Previous">
-            <span>上一页</span>
-        </a>
+        <a
+          href="?page={{ sub .CurrentPage 1 }}{{ .PageParams }}"
+          aria-label="Previous"
+        ><span>上一页</span></a>
         {{ else }}
         <span class="pagination-disable">上一页</span>
         {{ end }}
 
-        <span class="pagination-number">{{ .CurrentPage }} / {{ if ne .CurrentPage .TotalPages }}<a href="?{{ if ne .Status 0 }}status={{ .Status }}&{{ end }}page={{ .TotalPages }}" class="no-color">{{ .TotalPages }}</a>{{ else }}{{ .TotalPages }}{{ end }}</span>
+        <span class="pagination-number">
+          {{ .CurrentPage }} /
+          {{ if ne .CurrentPage .TotalPages }}
+          <a
+            href="?page={{ .TotalPages }}{{ .PageParams }}"
+            class="no-color"
+          >{{ .TotalPages }}</a>
+          {{ else }}
+          {{ .TotalPages }}
+          {{ end }}
+        </span>
 
         {{ if lt .CurrentPage .TotalPages }}
-        <a href="?{{ if ne .Status 0 }}status={{ .Status }}&{{ end }}page={{ add .CurrentPage 1 }}" aria-label="Next">
-            <span>下一页</span>
-        </a>
+        <a
+          href="?page={{ add .CurrentPage 1 }}{{ .PageParams }}"
+          aria-label="Next"
+        ><span>下一页</span></a>
         {{ else }}
         <span class="pagination-disable">下一页</span>
         {{ end }}
     </div>
     {{ end }}
+
 </main>
 {{ end }}

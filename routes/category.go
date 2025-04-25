@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"html/template"
 	"math"
 	"net/http"
 	"strings"
@@ -21,9 +22,16 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
+	// Status - 1: 想看, 2: 在看, 3: 已看 (4: 搁置, 5: 抛弃)
 	status, err := helpers.StringToInt(r.URL.Query().Get("status"))
 	if err != nil || status < 0 || status > 5 {
 		status = 0
+	}
+
+	// sortBy - 1: 最近添加, 2: 最近标记, 3: 最早添加, 4: 最早标记
+	sortBy, err := helpers.StringToInt(r.URL.Query().Get("sort_by"))
+	if err != nil || sortBy < 1 || sortBy > 4 {
+		sortBy = 1
 	}
 
 	statusCounts, err := handlers.GetStatusCounts(category)
@@ -52,20 +60,41 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 		totalPages = getTotalPages(statusCounts.Dropped)
 	}
 
-	subjects, err := handlers.GetSubjectsByType(category, status, page, pageSize)
+	subjects, err := handlers.GetSubjectsByType(category, status, page, pageSize, sortBy)
 	if err != nil {
 		errorMessage := fmt.Sprintf("failed to get %s list: %v", category, err)
 		handleError(w, errorMessage, "home", 500)
 		return
 	}
 
+	var statusType string
+	switch category {
+	case "book":
+		statusType = "读"
+	case "game":
+		statusType = "玩"
+	default:
+		statusType = "看"
+	}
+
+	var pageParams string
+	if status != 0 {
+		pageParams += fmt.Sprintf("&status=%d", status)
+	}
+	if sortBy != 1 {
+		pageParams += fmt.Sprintf("&sort_by=%d", sortBy)
+	}
+
 	data := models.CategoryView{
 		PageTitle:    helpers.GetSubjectType(category),
 		Category:     category,
 		Status:       status,
+		StatusType:   statusType,
 		StatusCounts: statusCounts,
+		SortBy:       sortBy,
 		CurrentPage:  page,
 		TotalPages:   totalPages,
+		PageParams:   template.URL(pageParams),
 		Subjects:     processCategoryHTML(subjects),
 	}
 

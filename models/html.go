@@ -46,9 +46,12 @@ type CategoryView struct {
 	PageTitle    string
 	Category     string
 	Status       int
+	StatusType   string
 	StatusCounts StatusCounts
+	SortBy       int
 	CurrentPage  int
 	TotalPages   int
+	PageParams   template.URL
 	Subjects     []CategoryViewItem
 }
 

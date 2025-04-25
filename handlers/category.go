@@ -9,11 +9,11 @@ import (
 	"github.com/scenery/mediax/models"
 )
 
-func GetSubjectsByType(subjectType string, status int, page int, pageSize int) ([]models.SubjectSummary, error) {
+func GetSubjectsByType(subjectType string, status, page, pageSize, sortBy int) ([]models.SubjectSummary, error) {
 	db := database.GetDB()
 	var subjects []models.SubjectSummary
 
-	cacheSubjectsKey := fmt.Sprintf("page:%s:%d:%d", subjectType, status, page)
+	cacheSubjectsKey := fmt.Sprintf("page:%s:%d:%d:%d", subjectType, status, page, sortBy)
 
 	if page <= config.MaxCachePages {
 		if cachedSubjects, found := cache.GetCache(cacheSubjectsKey); found {
@@ -22,15 +22,44 @@ func GetSubjectsByType(subjectType string, status int, page int, pageSize int) (
 		}
 	}
 
-	query := db.Table("subject").
-		Where("subject_type = ?", subjectType).
-		Order("id desc").
-		Offset((page - 1) * pageSize).
-		Limit(pageSize)
+	query := db.
+		Table("subject").
+		Where("subject_type = ?", subjectType)
+
+	switch sortBy {
+	case 2:
+		query = query.Order(`
+            CASE
+              WHEN mark_date IS NULL
+                OR mark_date = ''
+                OR mark_date NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
+              THEN 1
+              ELSE 0
+            END,
+            mark_date DESC
+        `)
+	case 3:
+		query = query.Order("id ASC")
+	case 4:
+		query = query.Order(`
+            CASE
+              WHEN mark_date IS NULL
+                OR mark_date = ''
+                OR mark_date NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
+              THEN 1
+              ELSE 0
+            END,
+            mark_date ASC
+        `)
+	default:
+		query = query.Order("id DESC")
+	}
 
 	if status > 0 {
 		query = query.Where("status = ?", status)
 	}
+
+	query = query.Offset((page - 1) * pageSize).Limit(pageSize)
 
 	err := query.Find(&subjects).Error
 	if err != nil {

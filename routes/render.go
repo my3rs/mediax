@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -24,11 +25,14 @@ func renderPage(w http.ResponseWriter, contentTemplate string, data interface{})
 		return
 	}
 
-	err = pageTemplates.ExecuteTemplate(w, "baseof.html", data)
-	if err != nil {
+	// 渲染到 buffer
+	buf := &bytes.Buffer{}
+	if err := pageTemplates.ExecuteTemplate(buf, "baseof.html", data); err != nil {
 		http.Error(w, fmt.Sprintf("failed to render page: %v", err), http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	buf.WriteTo(w)
 }
 
 func handleError(w http.ResponseWriter, errorMessage, targetURL string, statusCode int) {
