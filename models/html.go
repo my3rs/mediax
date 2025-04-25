@@ -3,6 +3,7 @@ package models
 import "html/template"
 
 type SubjectView struct {
+	Category        string
 	PageTitle       string
 	ManageType      int
 	CreatorLabel    string
@@ -43,8 +44,8 @@ type StatusCounts struct {
 }
 
 type CategoryView struct {
-	PageTitle    string
 	Category     string
+	PageTitle    string
 	Status       int
 	StatusType   string
 	StatusCounts StatusCounts
@@ -57,6 +58,7 @@ type CategoryView struct {
 }
 
 type SearchView struct {
+	Category    string
 	PageTitle   string
 	Query       string
 	QueryType   string
@@ -75,6 +77,7 @@ type HomeViewItem struct {
 }
 
 type HomeView struct {
+	Category     string
 	PageTitle    string
 	FewBooks     bool
 	FewMovies    bool

@@ -58,6 +58,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.SearchView{
+		Category:    "search",
 		PageTitle:   "搜索结果 " + query,
 		Query:       query,
 		QueryType:   subjectType,

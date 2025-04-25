@@ -1,13 +1,35 @@
 {{ define "header" }}
 <header>
-    <h1><a href="/home" class="no-color">mediaX</a></h1>
-    <nav class="site-nav">
-        <a href="/home">主页</a>
-        <a href="/book">图书</a>
-        <a href="/movie">电影</a>
-        <a href="/tv">剧集</a>
-        <a href="/anime">番剧</a>
-        <a href="/game">游戏</a>
-    </nav>
+    <div class="header-container">
+        <nav class="site-nav">
+            <a class='site-nav-link{{ if eq .Category "" }} nav-active{{end}}' href="/home">mediaX</a>
+            <a class='site-nav-link{{ if eq .Category "book" }} nav-active{{end}}' href="/book">图书</a>
+            <a class='site-nav-link{{ if eq .Category "movie" }} nav-active{{end}}' href="/movie">电影</a>
+            <a class='site-nav-link{{ if eq .Category "tv" }} nav-active{{end}}' href="/tv">剧集</a>
+            <a class='site-nav-link{{ if eq .Category "anime" }} nav-active{{end}}' href="/anime">番剧</a>
+            <a class='site-nav-link{{ if eq .Category "game" }} nav-active{{end}}' href="/game">游戏</a>
+        </nav>
+        <input type="checkbox" id="search-toggle" style="display:none">
+        <label for="search-toggle" class="search-icon-toggle site-nav-search">
+            <span class="circle"></span>
+            <span class="handle"></span>
+        </label>
+        <div class="search-box-container">
+            <form class="search-box" action="/search" method="get">
+                <div class="search-bar">
+                    <input class="search-input" type="text" name="q" placeholder="搜索标题..." maxlength="32"/>
+                    <select class="search-select" name="subject_type">
+                        <option value="all">全部</option>
+                        <option value="book">图书</option>
+                        <option value="movie">电影</option>
+                        <option value="tv">剧集</option>
+                        <option value="anime">番剧</option>
+                        <option value="game">游戏</option>
+                    </select>
+                    <button class="search-button" type="submit">搜索</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </header>
 {{ end }}

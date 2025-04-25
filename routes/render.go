@@ -70,6 +70,7 @@ func processSingleHTML(pageTitle string, manageType int, subject models.Subject)
 	summaryLabel := labels["summaryLabel"]
 
 	processedSubject := models.SubjectView{
+		Category:     subject.SubjectType,
 		PageTitle:    pageTitle,
 		ManageType:   manageType,
 		CreatorLabel: creatorLabel,
