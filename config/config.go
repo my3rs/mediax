@@ -12,7 +12,6 @@ const (
 
 	// Cache
 	MaxCacheSubjects = 1000
-	MaxCachePages    = 50
 )
 
 // API Config

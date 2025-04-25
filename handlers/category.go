@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/scenery/mediax/cache"
-	"github.com/scenery/mediax/config"
 	"github.com/scenery/mediax/database"
 	"github.com/scenery/mediax/models"
 )
@@ -13,10 +12,10 @@ func GetSubjectsByType(subjectType string, status, page, pageSize, sortBy int) (
 	db := database.GetDB()
 	var subjects []models.SubjectSummary
 
-	cacheSubjectsKey := fmt.Sprintf("page:%s:%d:%d:%d", subjectType, status, page, sortBy)
+	cachePageKey := fmt.Sprintf("page:%s:%d:%d", subjectType, status, sortBy)
 
-	if page <= config.MaxCachePages {
-		if cachedSubjects, found := cache.GetCache(cacheSubjectsKey); found {
+	if page == 1 {
+		if cachedSubjects, found := cache.GetCache(cachePageKey); found {
 			subjects = cachedSubjects.([]models.SubjectSummary)
 			return subjects, nil
 		}
@@ -66,8 +65,8 @@ func GetSubjectsByType(subjectType string, status, page, pageSize, sortBy int) (
 		return nil, err
 	}
 
-	if page <= config.MaxCachePages {
-		cache.SetCache(cacheSubjectsKey, subjects)
+	if page == 1 {
+		cache.SetCache(cachePageKey, subjects)
 	}
 
 	return subjects, nil

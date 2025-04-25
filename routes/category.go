@@ -60,6 +60,11 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 		totalPages = getTotalPages(statusCounts.Dropped)
 	}
 
+	// 前端未限制跳转页数范围
+	if page > totalPages {
+		page = 1
+	}
+
 	subjects, err := handlers.GetSubjectsByType(category, status, page, pageSize, sortBy)
 	if err != nil {
 		errorMessage := fmt.Sprintf("failed to get %s list: %v", category, err)

@@ -146,11 +146,10 @@ func updateSubject(uuidStr string, data map[string]string, hasImage int) error {
 	subject.UpdatedAt = helpers.GetTimestamp()
 
 	cache.DeleteCache(fmt.Sprintf("subject:%s", uuidStr))
-	cache.DeleteSinglePageCache(subjectTypeOld, uuidStr, subjectStatusNew)
+	cache.ClearPageCache(subjectTypeOld)
 
 	if subjectStatusOld != subjectStatusNew {
 		cache.ClearCommonCache(subjectTypeOld)
-		cache.DeleteSinglePageCache(subjectTypeOld, uuidStr, subjectStatusOld)
 	}
 
 	if subjectTypeOld != subjectTypeNew {
@@ -158,8 +157,6 @@ func updateSubject(uuidStr string, data map[string]string, hasImage int) error {
 
 		cache.ClearCommonCache(subjectTypeOld)
 		cache.ClearCommonCache(subjectTypeNew)
-		cache.DeleteAfterPageCache(subjectTypeOld, uuidStr, subjectStatusOld)
-		cache.ClearPagesCache(subjectTypeNew, subjectStatusNew)
 	}
 	return db.Save(&subject).Error
 }
@@ -200,7 +197,7 @@ func addSubject(uuidStr string, data map[string]string, hasImage int) error {
 	}
 
 	cache.ClearCommonCache(subjectType)
-	cache.ClearPagesCache(subjectType, subjectStatus)
+	cache.ClearPageCache(subjectType)
 	return nil
 }
 
@@ -212,7 +209,6 @@ func ManageDelSubject(uuidStr, subjectType string) error {
 	if err != nil {
 		return err
 	}
-	status := subject.Status
 
 	err = db.Where("uuid = ?", uuidStr).Delete(&subject).Error
 	if err != nil {
@@ -227,7 +223,7 @@ func ManageDelSubject(uuidStr, subjectType string) error {
 
 	cache.DeleteCache(fmt.Sprintf("subject:%s", uuidStr))
 	cache.ClearCommonCache(subjectType)
-	cache.DeleteAfterPageCache(subjectType, uuidStr, status)
+	cache.ClearPageCache(subjectType)
 	return nil
 }
 
