@@ -27,29 +27,11 @@ func GetSubjectsByType(subjectType string, status, page, pageSize, sortBy int) (
 
 	switch sortBy {
 	case 2:
-		query = query.Order(`
-            CASE
-              WHEN mark_date IS NULL
-                OR mark_date = ''
-                OR mark_date NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
-              THEN 1
-              ELSE 0
-            END,
-            mark_date DESC
-        `)
+		query = query.Order("mark_date DESC")
 	case 3:
 		query = query.Order("id ASC")
 	case 4:
-		query = query.Order(`
-            CASE
-              WHEN mark_date IS NULL
-                OR mark_date = ''
-                OR mark_date NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
-              THEN 1
-              ELSE 0
-            END,
-            mark_date ASC
-        `)
+		query = query.Order("mark_date ASC")
 	default:
 		query = query.Order("id DESC")
 	}

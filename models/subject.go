@@ -3,21 +3,21 @@ package models
 // Database / Detail
 // Status - 1: 想看, 2: 在看, 3: 已看 (4: 搁置, 5: 抛弃)
 type Subject struct {
-	ID          uint   `gorm:"primaryKey;index:idx_type_status_id;column:id"`
+	ID          uint   `gorm:"primaryKey;index:idx_type_status_id,priority:3;column:id"`
 	UUID        string `gorm:"size:36;unique;column:uuid"`
-	SubjectType string `gorm:"size:16;index:idx_type_status_id;column:subject_type"`
+	SubjectType string `gorm:"size:16;index:idx_type_status_id,priority:1;index:idx_type_status_markdate,priority:1;column:subject_type"`
 	Title       string `gorm:"size:255;index:idx_title;column:title"`
 	AltTitle    string `gorm:"size:255;column:alt_title"`
 	Creator     string `gorm:"size:512;column:creator"`
 	Press       string `gorm:"size:255;column:press"`
-	Status      int    `gorm:"index:idx_type_status_id;column:status"`
+	Status      int    `gorm:"index:idx_type_status_id,priority:2;index:idx_type_status_markdate,priority:2;column:status"`
 	Rating      int    `gorm:"column:rating"`
 	ExternalURL string `gorm:"size:255;index:idx_external_url;column:external_url"`
 	HasImage    int    `gorm:"column:has_image"`
 	Summary     string `gorm:"type:text;column:summary"`
 	Comment     string `gorm:"type:text;column:comment"`
 	PubDate     string `gorm:"size:36;column:pub_date"`
-	MarkDate    string `gorm:"size:36;column:mark_date"`
+	MarkDate    string `gorm:"size:36;index:idx_type_status_markdate,priority:3;column:mark_date"`
 	CreatedAt   int64  `gorm:"column:created_at"`
 	UpdatedAt   int64  `gorm:"column:updated_at"`
 }
