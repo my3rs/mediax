@@ -105,6 +105,8 @@
 
         <form method="get" class="pagination-jump" style="display: inline;">
             <input type="text" inputmode="numeric" pattern="\d*" name="page" />
+            <input type="hidden" name="status" value="{{ .Status }}">
+            <input type="hidden" name="sort_by" value="{{ .SortBy }}">
             <span class="note-color">({{ .CurrentPage }} / {{ .TotalPages }})</span>
         </form>
     </div>
