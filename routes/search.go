@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"html/template"
 	"math"
 	"net/http"
 	"strings"
@@ -57,6 +58,9 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		total = int64(len(filteredSubjects))
 	}
 
+	totalPages := int(math.Ceil(float64(total) / float64(pageSize)))
+	pageParams := fmt.Sprintf("&q=%s&subject_type=%s", query, subjectType)
+
 	data := models.SearchView{
 		Category:    "search",
 		PageTitle:   "搜索结果 " + query,
@@ -64,7 +68,9 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		QueryType:   subjectType,
 		TotalCount:  total,
 		CurrentPage: page,
-		TotalPages:  int(math.Ceil(float64(total) / float64(pageSize))),
+		TotalPages:  totalPages,
+		PageNumbers: generatePageNumbers(page, totalPages),
+		PageParams:  template.URL(pageParams),
 		Subjects:    processCategoryHTML(subjects),
 	}
 

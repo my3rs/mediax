@@ -40,7 +40,7 @@
         --color-scheme: #1a1c1b;
         --title-color: #f2f2f2;
         --font-color: #e3e3e3;
-        --note-color: #b2b2b2;
+        --note-color: #c2c2c2;
         --border-color: #323433;
         --highlight-color: #2d2f2e;
         --sec-color: #2a2c2b;
@@ -123,22 +123,16 @@ input,
 select,
 textarea {
     font-family: var(--font-family);
-    font-size: 14px;
+    font-size: 16px;
     color: var(--font-color);
     background-color: var(--color-scheme);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-small)
 }
 
-textarea {
-    width: 100%;
-    min-height: 100px;
-    padding: 10px 15px
-}
-
 input {
     width: 100%;
-    height: 30px;
+    height: 32px;
     padding: 2px 8px
 }
 
@@ -152,9 +146,37 @@ textarea:focus {
     outline: 0
 }
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: none;
+}
+
+input[type="file"] {
+    font-size: 14px;
+    border: 0;
+    max-width: 50%
+}
+
+input[type="file"]::file-selector-button {
+    font-size: 14px;
+}
+
 select {
     min-width: 80px;
-    padding: 4px 8px
+    padding: 4px 8px;
+    font-size: 14px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px 15px
 }
 
 button {
@@ -174,21 +196,21 @@ button:hover {
     box-shadow: var(--box-shadow-normal)
 }
 
-footer,
 header,
-main {
+main,
+footer {
     max-width: var(--main-width)
-}
-
-footer,
-header {
-    margin: 60px auto
 }
 
 header {
     position: sticky;
+    margin: 60px auto 30px;
     top: 30px;
     z-index: 10;
+}
+
+footer {
+    margin: 50px auto
 }
 
 .padding-0 {
@@ -205,7 +227,7 @@ header {
     align-items: center;
     margin: auto;
     width: fit-content;
-    height: 45px;
+    height: 42px;
     border-radius: 28px;
     overflow: hidden;
     background-color: var(--site-nav-bg);
@@ -224,7 +246,7 @@ header {
     color: var(--font-color);
     min-width: 50px;
     margin: 0 2px;
-    padding: 5px 8px;
+    padding: 6px 10px;
     border-radius: var(--border-radius-large);
     font-size: 14px;
     font-weight: 600;
@@ -253,34 +275,61 @@ main {
     min-height: 300px
 }
 
-.page-title {
-    font-size: 24px;
-    font-weight: 600;
-    display: flex;
-    column-gap: 10px;
-    align-items: center
-}
-
-.page-title svg {
-    vertical-align: middle;
-    display: inline-block
-}
-
-.item-badge {
-    height: 40px;
-    width: 40px;
-    position: absolute;
-    right: -20px;
-    top: -20px;
-    background-color: #f70;
-    -webkit-transform: rotate(45deg);
-    transform: rotate(45deg);
-    z-index: 2
-}
-
-.home-header {
+.page-heading {
     display: flex;
     align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    margin: 30px 0;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--note-color);
+    text-align: center;
+    letter-spacing: 1px
+}
+
+.page-heading h1,
+.page-heading h2 {
+    margin: 0;
+    font-size: inherit;
+    color: inherit;
+}
+
+.page-heading a {
+    color: var(--title-color)
+}
+
+.page-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 15px;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px 0 15px;
+    font-size: 14px;
+}
+
+.page-func {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+}
+
+.page-filter li {
+    display: inline-block;
+    margin-right: 10px
+}
+
+.page-filter a {
+    color: var(--sec-note-color)
+}
+
+.page-filter a.active {
+    font-weight: 600
+}
+
+.home-section .page-heading {
+    column-gap: 0;
     justify-content: space-between
 }
 
@@ -291,7 +340,7 @@ main {
     transition: all .25s var(--transition-effect)
 }
 
-.home-header:hover .home-add {
+.home-section .page-heading:hover .home-add {
     visibility: visible;
     opacity: 1
 }
@@ -344,40 +393,23 @@ main {
     white-space: nowrap
 }
 
-.page-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 10px
-}
-
-.page-func {
-    font-size: 14px
-}
-
-.subject-status-filter {
-    margin: 20px 0;
-    font-size: 14px
-}
-
-.subject-status-filter li {
-    display: inline-block;
-    margin-right: 10px
-}
-
-.subject-status-filter a {
-    color: var(--sec-note-color)
-}
-
-.subject-status-filter a.active {
-    font-weight: 600
+.item-badge {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    background-color: #f70;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    z-index: 2
 }
 
 .subject-list-item {
-    height: 161px;
-    border-bottom: 1px dashed var(--border-color);
+    height: 175px;
+    border-bottom: 1px solid var(--border-color);
     padding: 15px 0;
-    line-height: 1.4
+    line-height: 1.5
 }
 
 .subject-list-item:last-child {
@@ -386,9 +418,9 @@ main {
 
 .subject-list-cover {
     float: left;
-    width: 90px;
-    height: 130px;
-    margin-right: 15px;
+    width: 100px;
+    height: 144px;
+    margin-right: 20px;
     border-radius: var(--border-radius-small);
     box-shadow: var(--box-shadow-normal);
     overflow: hidden
@@ -425,16 +457,63 @@ main {
 }
 
 .subject-list-null {
-    margin: 30px 0 60px
+    margin: 100px 0 !important;
+    text-align: center;
 }
 
-.single-heading {
-    display: none
+.subject-card h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #fff;
+}
+
+.subject-card p {
+    margin: 5px 0;
+    line-height: 1.5
+}
+
+.subject-card label,
+.subject-card span {
+    vertical-align: middle
+}
+
+.subject-card label {
+    color: #e1e1e3;
+}
+
+.subject-card span {
+    color: #f1f1f3;
+}
+
+.subject-card .note-color {
+    color: #d1d1d3 !important;
+}
+
+.subject-card {
+    position: relative;
+    background-color: var(--highlight-color);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--box-shadow-normal);
+    overflow: hidden
+}
+
+.subject-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover
 }
 
 .subject-info {
     display: flex;
-    word-break: break-all
+    padding: 40px;
+    word-break: break-all;
+    background-color: rgba(33, 33, 33, .3);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px)
 }
 
 .subject-cover {
@@ -443,21 +522,6 @@ main {
     height: 100%;
     border-radius: var(--border-radius-normal);
     box-shadow: var(--box-shadow-card)
-}
-
-.subject-detail h2 {
-    margin: 0;
-    font-size: 24px
-}
-
-.subject-detail p {
-    margin: 5px 0;
-    line-height: 1.5
-}
-
-.subject-detail label,
-.subject-detail span {
-    vertical-align: middle
 }
 
 a.subject-outlink {
@@ -517,6 +581,17 @@ a.subject-outlink {
     margin-top: 0
 }
 
+.edit-page .subject-info {
+    padding: 0;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+.edit-cover {
+    margin-top: 15px;
+}
+
 .edit-detail label {
     font-size: 14px;
     min-width: 94px
@@ -544,11 +619,6 @@ a.subject-outlink {
 .edit-upload {
     font-size: 14px;
     margin-top: 20px
-}
-
-.edit-upload input {
-    border: 0;
-    max-width: 50%
 }
 
 .cancel-link {
@@ -595,12 +665,14 @@ a.subject-outlink {
     text-decoration: underline
 }
 
-.pagination {
-    width: 100%;
-    padding: 0;
+.page-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
     margin: 50px 0;
     font-size: 15px;
-    color: var(--sec-note-color)
+    color: var(--sec-note-color);
 }
 
 .pagination a {
@@ -628,7 +700,6 @@ a.subject-outlink {
 }
 
 .pagination-jump input {
-    margin-left: 15px;
     width: 40px;
     height: 30px
 }
@@ -643,7 +714,6 @@ a.subject-outlink {
 .search-box-container {
     display: flex;
     width: 0;
-    height: 45px;
     position: absolute;
     top: 0;
     right: 0;
@@ -728,6 +798,7 @@ a.subject-outlink {
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    height: 42px;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-large);
     transition: box-shadow .25s var(--transition-effect)
@@ -752,7 +823,6 @@ a.subject-outlink {
     background-repeat: no-repeat;
     background-position: right center;
     background-size: 8px 4px;
-    transition: all 0.25s var(--transition-effect);
     cursor: pointer
 }
 
@@ -776,9 +846,6 @@ a.subject-outlink {
 }
 
 .search-input {
-    width: 80%;
-    height: 100%;
-    font-size: 14px;
     margin-left: 15px;
     border: 0;
     background: 0 0
@@ -798,29 +865,6 @@ a.subject-outlink {
 
 .search-cover {
     position: relative;
-}
-
-.search-badge {
-    height: 30px;
-    width: 30px;
-    right: -15px;
-    top: -15px;
-}
-
-.search-badge.book {
-    background-color: var(--book-color);
-}
-.search-badge.movie {
-    background-color: var(--movie-color);
-}
-.search-badge.tv {
-    background-color: var(--tv-color);
-}
-.search-badge.anime {
-    background-color: var(--anime-color);
-}
-.search-badge.game {
-    background-color: var(--game-color);
 }
 
 .rating-star-00,
@@ -928,7 +972,7 @@ a.subject-outlink {
 
 @media (max-width:480px) {
     .site-nav-link {
-        padding: 5px
+        padding: 6px 5px
     }
 
     .home-list {
@@ -940,17 +984,6 @@ a.subject-outlink {
         height: 150px
     }
 
-    .single-heading {
-        display: block;
-        font-size: 24px;
-        font-weight: 600;
-        margin-bottom: 20px
-    }
-
-    .single-heading span {
-        font-size: 18px
-    }
-
     .subject-info {
         flex-direction: column
     }
@@ -958,8 +991,8 @@ a.subject-outlink {
     .subject-cover {
         margin: 0 auto 20px auto
     }
-
-    .subject-detail-heading {
-        display: none
+    
+    .subject-list-cover {
+        margin-right: 15px
     }
 }

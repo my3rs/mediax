@@ -43,18 +43,24 @@ type StatusCounts struct {
 	Dropped int64
 }
 
+type StatusLabel struct {
+	Value int
+	Label string
+	Count int64
+}
+
 type CategoryView struct {
-	Category     string
-	PageTitle    string
-	Status       int
-	StatusType   string
-	StatusCounts StatusCounts
-	SortBy       int
-	CurrentPage  int
-	TotalPages   int
-	PageNumbers  []int
-	PageParams   template.URL
-	Subjects     []CategoryViewItem
+	Category    string
+	PageTitle   string
+	Status      int
+	TotalCounts int64
+	StatusList  []StatusLabel
+	SortBy      int
+	CurrentPage int
+	TotalPages  int
+	PageNumbers []int
+	PageParams  template.URL
+	Subjects    []CategoryViewItem
 }
 
 type SearchView struct {
@@ -65,6 +71,8 @@ type SearchView struct {
 	TotalCount  int64
 	CurrentPage int
 	TotalPages  int
+	PageNumbers []int
+	PageParams  template.URL
 	Subjects    []CategoryViewItem
 }
 
@@ -78,6 +86,7 @@ type HomeViewItem struct {
 
 type HomeView struct {
 	Category     string
+	Today        string
 	PageTitle    string
 	FewBooks     bool
 	FewMovies    bool

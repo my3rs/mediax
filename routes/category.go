@@ -82,6 +82,14 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 		statusType = "看"
 	}
 
+	statusList := []models.StatusLabel{
+		{Value: 1, Label: fmt.Sprintf("想%s", statusType), Count: statusCounts.Todo},
+		{Value: 2, Label: fmt.Sprintf("在%s", statusType), Count: statusCounts.Doing},
+		{Value: 3, Label: fmt.Sprintf("%s过", statusType), Count: statusCounts.Done},
+		{Value: 4, Label: "搁置", Count: statusCounts.OnHold},
+		{Value: 5, Label: "抛弃", Count: statusCounts.Dropped},
+	}
+
 	var pageParams string
 	if status != 0 {
 		pageParams += fmt.Sprintf("&status=%d", status)
@@ -91,17 +99,17 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.CategoryView{
-		PageTitle:    helpers.GetSubjectType(category),
-		Category:     category,
-		Status:       status,
-		StatusType:   statusType,
-		StatusCounts: statusCounts,
-		SortBy:       sortBy,
-		CurrentPage:  page,
-		TotalPages:   totalPages,
-		PageNumbers:  generatePageNumbers(page, totalPages),
-		PageParams:   template.URL(pageParams),
-		Subjects:     processCategoryHTML(subjects),
+		PageTitle:   helpers.GetSubjectType(category),
+		Category:    category,
+		Status:      status,
+		TotalCounts: statusCounts.All,
+		StatusList:  statusList,
+		SortBy:      sortBy,
+		CurrentPage: page,
+		TotalPages:  totalPages,
+		PageNumbers: generatePageNumbers(page, totalPages),
+		PageParams:  template.URL(pageParams),
+		Subjects:    processCategoryHTML(subjects),
 	}
 
 	renderPage(w, "category.html", data)

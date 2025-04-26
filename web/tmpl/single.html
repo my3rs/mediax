@@ -2,42 +2,43 @@
 
 <main>
     <div class="subject">
-        <div class="single-heading">
-            {{ .Subject.Title }}
-            {{ with .Subject.AltTitle }}
-            <span class="note-color">{{ . }}</span>
-            {{ end }}
-        </div>
-        <div class="subject-info">
-            <img class="subject-cover" src='{{ .ImageURL }}' alt="{{ .PageTitle }}">
-            <div class="subject-detail">
-                <div class="subject-detail-heading">
-                    <h2>{{ .Subject.Title }}</h2>
+        <h1 class="page-heading">{{ .Subject.Title }}</h1>
+        <div class="subject-card">
+            <div class="subject-card-overlay" 
+                {{ if eq .Subject.HasImage 1 }}
+                    style="background-image: url('{{ .ImageURL }}')"
+                {{ else }}
+                    style="background-color: var(--highlight-color)"
+                {{ end }}
+            ></div>
+            <div class="subject-info">
+                <img class="subject-cover" src='{{ .ImageURL }}' alt="{{ .PageTitle }}">
+                <div class="subject-detail">
                     {{ with .Subject.AltTitle }}
-                    <span class="note-color">{{ . }}</span>
+                    <h2>{{ . }}</h2>
+                    {{ end }}
+                    {{ if .Subject.Creator }}
+                    <p><label>{{ .CreatorLabel }}:</label><span>{{ .Subject.Creator }}</span></p>
+                    {{ end }}
+                    {{ if .Subject.Press }}
+                    <p><label>{{ .PressLabel }}:</label><span>{{ .Subject.Press }}</span></p>
+                    {{ end }}
+                    {{ if .Subject.PubDate }}
+                    <p><label>{{ .PubDateLabel }}:</label><span>{{ .Subject.PubDate }}</span></p>
+                    {{ end }}
+                    <p><label>标记日期:</label><span>{{ .Subject.MarkDate }}</span></p>
+                    <p><label>标记状态:</label><span>{{ .StatusText }}</span></p>
+                    <p><label>我的评分:</label>
+                    {{ if .RatingStar }}
+                    <span class="rating-star-{{ .RatingStar }} note-color"></span>
+                    {{ else }}
+                    <span class="note-color"><i>暂未评分</i></span>
+                    {{ end }}
+                    </p>
+                    {{ if .ExternalURLIcon }}
+                    <p><label>外部链接:</label>&nbsp;{{ .ExternalURLIcon }}</p>
                     {{ end }}
                 </div>
-                {{ if .Subject.Creator }}
-                <p><label>{{ .CreatorLabel }}:</label><span>{{ .Subject.Creator }}</span></p>
-                {{ end }}
-                {{ if .Subject.Press }}
-                <p><label>{{ .PressLabel }}:</label><span>{{ .Subject.Press }}</span></p>
-                {{ end }}
-                {{ if .Subject.PubDate }}
-                <p><label>{{ .PubDateLabel }}:</label><span>{{ .Subject.PubDate }}</span></p>
-                {{ end }}
-                <p><label>标记日期:</label><span>{{ .Subject.MarkDate }}</span></p>
-                <p><label>标记状态:</label><span>{{ .StatusText }}</span></p>
-                <p><label>我的评分:</label>
-                {{ if .RatingStar }}
-                <span class="rating-star-{{ .RatingStar }} note-color"></span>
-                {{ else }}
-                <span class="note-color"><i>暂未评分</i></span>
-                {{ end }}
-                </p>
-                {{ if .ExternalURLIcon }}
-                <p><label>外部链接:</label>&nbsp;{{ .ExternalURLIcon }}</p>
-                {{ end }}
             </div>
         </div>
         <div class="subject-intro">

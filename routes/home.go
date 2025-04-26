@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/scenery/mediax/handlers"
 	"github.com/scenery/mediax/models"
@@ -16,6 +17,10 @@ func redirectToHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleHomePage(w http.ResponseWriter, r *http.Request) {
+	now := time.Now()
+	weekdays := [...]string{"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"}
+	today := fmt.Sprintf("%d月%d日 %s", now.Month(), now.Day(), weekdays[now.Weekday()])
+
 	recentSubjects, err := handlers.GetRecentSubjects()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to get recent subjects: %v", err), http.StatusInternalServerError)
@@ -29,6 +34,7 @@ func handleHomePage(w http.ResponseWriter, r *http.Request) {
 	recentGames := recentSubjects["game"]
 
 	data := models.HomeView{
+		Today:        today,
 		PageTitle:    "主页",
 		FewBooks:     len(recentBooks) < 5,
 		FewMovies:    len(recentMovies) < 5,

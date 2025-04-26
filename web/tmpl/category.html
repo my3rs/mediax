@@ -1,12 +1,27 @@
 {{ define "main" }}
 <main>
     <div class="page-heading">
-        <div class="page-title">
-            <img src="/static/icons/icon-{{ .Category }}.svg" alt="{{ .Category }}" width="28" height="28">
-            <a class="no-color" href="/{{ .Category }}">{{ .PageTitle }} ({{ .StatusCounts.All }})</a>
-            <a class="no-color" href="/add?subject_type={{ .Category }}" title="添加">
-                <svg xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd" viewBox="0 0 24 24" width="24" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="currentColor"><path d="M17.5 11c2.484 0 4.5 2.016 4.5 4.5S19.984 20 17.5 20 13 17.984 13 15.5s2.016-4.5 4.5-4.5zm.5 4v-1.5c0-.265-.235-.5-.5-.5s-.5.235-.5.5V15h-1.5c-.265 0-.5.235-.5.5s.235.5.5.5H17v1.5c0 .265.235.5.5.5s.5-.235.5-.5V16h1.5c.265 0 .5-.235.5-.5s-.235-.5-.5-.5H18zm-6.479 1c.043.522.153 1.025.321 1.5H2.75a.75.75 0 0 1 0-1.5zm1.106-4c-.328.456-.594.96-.785 1.5H2.75a.75.75 0 0 1 0-1.5zM20 8.75a.75.75 0 0 0-.75-.75H2.75a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 .75-.75zm0-4a.75.75 0 0 0-.75-.75H2.75a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 .75-.75z" fill-rule="nonzero"/></svg>
-            </a>
+        {{ if eq .Category "book" }}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" fill="currentColor"><path d="M23 5v13.883l-1 .117v-16c-3.895.119-7.505.762-10.002 2.316-2.496-1.554-6.102-2.197-9.998-2.316v16l-1-.117v-13.883h-1v15h9.057c1.479 0 1.641 1 2.941 1 1.304 0 1.461-1 2.942-1h9.06v-15h-1zm-12 13.645c-1.946-.772-4.137-1.269-7-1.484v-12.051c2.352.197 4.996.675 7 1.922v11.613zm9-1.484c-2.863.215-5.054.712-7 1.484v-11.613c2.004-1.247 4.648-1.725 7-1.922v12.051z"/></svg>
+        {{ else if eq .Category "movie" }}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" fill="currentColor"><path d="M13.112 6L16 2.625 15.219 2 12 5.75 8.781 2 8 2.625 10.888 6H0v16h24V6H13.112zM21 20H3V8h18v12zM9 18v-8l7 4-7 4z"/></svg>
+        {{ else if eq .Category "tv" }}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" fill="currentColor"><path d="M13.112 6L16 2.625 15.219 2 12 5.75 8.781 2 8 2.625 10.888 6H0v16h24V6H13.112zM21 20H3V8h18v12zM6.164 11h5.673v1.418h-2.01V17H8.174v-4.582h-2.01V11zm9.961 0l-1.158 3.653L13.816 11h-1.701l1.942 6h1.792l1.986-6h-1.71z"/></svg>
+        {{ else if eq .Category "anime" }}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" fill="currentColor"><path d="M13.112 6L16 2.625 15.219 2 12 5.75 8.781 2 8 2.625 10.888 6H0v16h24V6H13.112zM21 20H3V8h18v12zM8 11.5a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zm8 0a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6z"/></svg>
+        {{ else if eq .Category "game" }}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" fill="currentColor"><path d="M17.622 3c-1.913 0-2.558 1.382-5.623 1.382C8.99 4.382 8.253 3 6.376 3 1.167 3 0 13.375 0 17.348 0 19.493.817 21 2.469 21c3.458 0 2.926-5 6.915-5h5.23c3.989 0 3.457 5 6.915 5C23.181 21 24 19.494 24 17.349 24 13.376 22.831 3 17.622 3zM7 13a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm10-6a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm2 2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm2-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM8.75 10c0 .965-.785 1.75-1.75 1.75S5.25 10.965 5.25 10 6.035 8.25 7 8.25s1.75.785 1.75 1.75z"/></svg>
+        {{ end }}
+        <h1>{{ .PageTitle }} ({{ .TotalCounts }})</h1>
+    </div>
+
+    {{ if ne .TotalCounts 0 }}
+    <div class="page-toolbar">
+        <div class="page-filter">
+            {{ range .StatusList }}
+                <li><a href="/{{ $.Category }}?status={{ .Value }}" class="{{ if eq $.Status .Value }}active{{ end }}">{{ .Label }}({{ .Count }})</a>
+                </li>
+            {{ end }}
         </div>
         <div class="page-func">
             <form method="get">
@@ -20,15 +35,8 @@
                 <input type="hidden" name="page"  value="{{ .CurrentPage }}">
                 <input type="hidden" name="status" value="{{ .Status }}">
             </form>
+            <a class="no-color" href="/add?subject_type={{ .Category }}" title="添加">添加{{ .PageTitle }}+</a>
         </div>
-    </div>
-
-    <div class="subject-status-filter">
-        <li><a href="/{{.Category}}?status=1" class="{{ if eq .Status 1 }}active{{ end }}">{{ printf "想%s" .StatusType }}</a>({{ .StatusCounts.Todo }})</li>
-        <li><a href="/{{.Category}}?status=2" class="{{ if eq .Status 2 }}active{{ end }}">{{ printf "在%s" .StatusType }}</a>({{ .StatusCounts.Doing }})</li>
-        <li><a href="/{{.Category}}?status=3" class="{{ if eq .Status 3 }}active{{ end }}">{{ printf "%s过" .StatusType }}</a>({{ .StatusCounts.Done }})</li>
-        <li><a href="/{{.Category}}?status=4" class="{{ if eq .Status 4 }}active{{ end }}">搁置</a>({{ .StatusCounts.OnHold }})</li>
-        <li><a href="/{{.Category}}?status=5" class="{{ if eq .Status 5 }}active{{ end }}">抛弃</a>({{ .StatusCounts.Dropped }})</li>
     </div>
 
     <ul class="subject-list">
@@ -63,54 +71,54 @@
                 <p>{{ .MarkDate }} {{ .StatusText }}</p>
             </div>
         </li>
-        {{ else }}
-        <div class="subject-list-null note-color"><i>暂无{{ .PageTitle }}。</i></div>
         {{ end }}
     </ul>
+    {{ else }}
+    <div class="subject-list-null note-color"><i>伟大的冒险，总是从一片空白开始。</i></div>
+    {{ end }}
 
     {{ if gt .TotalPages 1 }}
-    <div class="pagination">
-
-    {{ if gt .CurrentPage 1 }}
-        <a class="pagination-number padding-0" href="?page=1{{ .PageParams }}">首页</a>
-        <a class="pagination-number" href="?page={{ sub .CurrentPage 1 }}{{ .PageParams }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="currentColor"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
-        </a>
-    {{ else }}
-        <span class="pagination-disable padding-0">首页</span>
-        <span class="pagination-disable">
-            <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="var(--note-color)"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
-        </span>
-    {{ end }}
-
-    {{ range .PageNumbers }}
-        {{ if eq . $.CurrentPage }}
-        <span class="pagination-current">{{ . }}</span>
-        {{ else }}
-        <a class="pagination-number" href="?page={{ . }}{{ $.PageParams }}">{{ . }}</a>
-        {{ end }}
-    {{ end }}
-
-    {{ if lt .CurrentPage .TotalPages }}
-        <a class="pagination-number icon-mirror" href="?page={{ add .CurrentPage 1 }}{{ .PageParams }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="currentColor"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
-        </a>
-        <a class="pagination-number padding-0" href="?page={{ .TotalPages }}{{ .PageParams }}">尾页</a>
-    {{ else }}
-        <span class="pagination-disable icon-mirror">
-            <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="var(--note-color)"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
-        </span>
-        <span class="pagination-disable padding-0">尾页</span>
-    {{ end }}
-
+    <div class="page-nav">
+        <div class="pagination">
+            {{ if gt .CurrentPage 1 }}
+            <a class="pagination-number padding-0" href="?page=1{{ .PageParams }}">首页</a>
+            <a class="pagination-number" href="?page={{ sub .CurrentPage 1 }}{{ .PageParams }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="currentColor"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
+            </a>
+            {{ else }}
+            <span class="pagination-disable padding-0">首页</span>
+            <span class="pagination-disable">
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="var(--note-color)"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
+            </span>
+            {{ end }}
+    
+            {{ range .PageNumbers }}
+            {{ if eq . $.CurrentPage }}
+            <span class="pagination-current">{{ . }}</span>
+            {{ else }}
+            <a class="pagination-number" href="?page={{ . }}{{ $.PageParams }}">{{ . }}</a>
+            {{ end }}
+            {{ end }}
+    
+            {{ if lt .CurrentPage .TotalPages }}
+            <a class="pagination-number icon-mirror" href="?page={{ add .CurrentPage 1 }}{{ .PageParams }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="currentColor"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
+            </a>
+            <a class="pagination-number padding-0" href="?page={{ .TotalPages }}{{ .PageParams }}">尾页</a>
+            {{ else }}
+            <span class="pagination-disable icon-mirror">
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="var(--note-color)"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
+            </span>
+            <span class="pagination-disable padding-0">尾页</span>
+            {{ end }}
+        </div>
         <form method="get" class="pagination-jump" style="display: inline;">
-            <input type="text" inputmode="numeric" pattern="\d*" name="page" />
+            <input type="number" name="page" min="1" max="{{ .TotalPages }}" required autocomplete="off">
             <input type="hidden" name="status" value="{{ .Status }}">
             <input type="hidden" name="sort_by" value="{{ .SortBy }}">
-            <span class="note-color">({{ .CurrentPage }} / {{ .TotalPages }})</span>
+            <span class="note-color">( {{ .CurrentPage }} / {{ .TotalPages }} )</span>
         </form>
     </div>
     {{ end }}
-
 </main>
 {{ end }}
