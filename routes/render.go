@@ -218,10 +218,23 @@ func getImageURL(manageType, hasImage int, subjectType, uuid, externalURL string
 }
 
 func getExternalURLIcon(externalURL string) template.HTML {
-	switch {
-	case strings.Contains(externalURL, "douban.com"):
+	siteName := func(url string) string {
+		switch {
+		case strings.Contains(url, "douban.com"):
+			return "douban"
+		case strings.Contains(url, "bgm.tv"), strings.Contains(url, "bangumi.tv"):
+			return "bangumi"
+		default:
+			return "other"
+		}
+	}
+
+	site := siteName(externalURL)
+
+	switch site {
+	case "douban":
 		return template.HTML(fmt.Sprintf(`<a class="subject-outlink link-douban" href="%s" target="_blank" rel="noopener noreferrer">豆瓣</a>`, externalURL))
-	case strings.Contains(externalURL, "bgm.tv"):
+	case "bangumi":
 		return template.HTML(fmt.Sprintf(`<a class="subject-outlink link-bangumi" href="%s" target="_blank" rel="noopener noreferrer">Bangumi</a>`, externalURL))
 	default:
 		return template.HTML(fmt.Sprintf(`<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>`, externalURL, externalURL))

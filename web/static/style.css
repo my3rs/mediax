@@ -245,8 +245,7 @@ footer {
 .site-nav-link {
     color: var(--font-color);
     min-width: 50px;
-    margin: 0 2px;
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: var(--border-radius-large);
     font-size: 14px;
     font-weight: 600;
@@ -465,6 +464,7 @@ main {
     margin: 0;
     font-size: 22px;
     color: #fff;
+    word-break: keep-all
 }
 
 .subject-card p {
@@ -511,7 +511,7 @@ main {
     display: flex;
     padding: 40px;
     word-break: break-all;
-    background-color: rgba(33, 33, 33, .3);
+    background-color: rgba(33, 33, 33, .33);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px)
 }
@@ -941,10 +941,6 @@ a.subject-outlink {
         padding: 0 10px
     }
 
-    .site-nav-link {
-        margin: 0
-    }
-
     .home-list {
         grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     }
@@ -985,7 +981,8 @@ a.subject-outlink {
     }
 
     .subject-info {
-        flex-direction: column
+        flex-direction: column;
+        padding: 30px;
     }
 
     .subject-cover {
