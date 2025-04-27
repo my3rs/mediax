@@ -132,18 +132,8 @@ func processHomeHTML(subjects []models.SubjectSummary) []models.HomeViewItem {
 	for _, subject := range subjects {
 		imageURL := getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
 
-		var isDoing bool
-		if subject.Status == 2 {
-			isDoing = true
-		} else {
-			isDoing = false
-		}
-
 		processedSubjects = append(processedSubjects, models.HomeViewItem{
 			SubjectURL: fmt.Sprintf("/%s/%s", subject.SubjectType, subject.UUID),
-			Title:      subject.Title,
-			MarkDate:   subject.MarkDate,
-			IsDoing:    isDoing,
 			ImageURL:   imageURL,
 		})
 	}

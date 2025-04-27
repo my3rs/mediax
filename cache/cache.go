@@ -8,6 +8,7 @@ import (
 )
 
 // 首页缓存: home:{subject_type}
+// 首页总结缓存: home_summary:{subject_type}
 // 分类首页缓存: page:{subject_type}:{status}:{sort_by}
 // 分类总数缓存: count:{subject_type}
 // 条目缓存: subject:{uuid}
@@ -64,6 +65,9 @@ func DeleteCache(key string) {
 func ClearCommonCache(subjectType string) {
 	homeCacheKey := fmt.Sprintf("home:%s", subjectType)
 	DeleteCache(homeCacheKey)
+
+	homeSummaryCacheKey := fmt.Sprintf("home_summary:%s", subjectType)
+	DeleteCache(homeSummaryCacheKey)
 
 	countCacheKey := fmt.Sprintf("count:%s", subjectType)
 	DeleteCache(countCacheKey)

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/scenery/mediax/handlers"
+	"github.com/scenery/mediax/helpers"
 	"github.com/scenery/mediax/models"
 )
 
@@ -21,31 +22,30 @@ func handleHomePage(w http.ResponseWriter, r *http.Request) {
 	weekdays := [...]string{"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"}
 	today := fmt.Sprintf("%d月%d日 %s", now.Month(), now.Day(), weekdays[now.Weekday()])
 
-	recentSubjects, err := handlers.GetRecentSubjects()
+	recentSubjects, err := handlers.GetRecentSubjects(5)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to get recent subjects: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	recentBooks := recentSubjects["book"]
-	recentMovies := recentSubjects["movie"]
-	recentTVs := recentSubjects["tv"]
-	recentAnimes := recentSubjects["anime"]
-	recentGames := recentSubjects["game"]
+	var recentGroups []models.HomeViewType
+	subjectTypes := []string{"book", "movie", "tv", "anime", "game"}
+	for _, subjectType := range subjectTypes {
+		summary, _ := handlers.GetHomeSummary(subjectType)
+		recentGroups = append(recentGroups, models.HomeViewType{
+			SubjectType: subjectType,
+			TypeZH:      helpers.GetTypeZH(subjectType),
+			ActionZH:    helpers.GetActionZH(subjectType),
+			UnitZH:      helpers.GetUnitZH(subjectType),
+			Items:       processHomeHTML(recentSubjects[subjectType]),
+			Summary:     summary,
+		})
+	}
 
 	data := models.HomeView{
 		Today:        today,
 		PageTitle:    "主页",
-		FewBooks:     len(recentBooks) < 5,
-		FewMovies:    len(recentMovies) < 5,
-		FewTVs:       len(recentTVs) < 5,
-		FewAnimes:    len(recentAnimes) < 5,
-		FewGames:     len(recentGames) < 5,
-		RecentBooks:  processHomeHTML(recentBooks),
-		RecentMovies: processHomeHTML(recentMovies),
-		RecentTVs:    processHomeHTML(recentTVs),
-		RecentAnimes: processHomeHTML(recentAnimes),
-		RecentGames:  processHomeHTML(recentGames),
+		RecentGroups: recentGroups,
 	}
 
 	renderPage(w, "index.html", data)

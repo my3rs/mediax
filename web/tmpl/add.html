@@ -3,56 +3,18 @@
     <h2 class="page-heading">添加条目</h2>
     <p>1. 选择添加的类型:</p>
     <form id="mediaForm" action="/add" method="POST">
-        <div class="home-list">
-            <div class="home-item">
-                <input type="radio" id="book" name="subject_type" value="book" {{if eq .SubjectType "book" }}checked{{end}} hidden>
-                <label for="book">
-                    <div class="home-item-cover add-selection">
-                        <img src="/static/icons/icon-book.svg" alt="book" width="50" height="50">
-                        <div class="home-item-name note-color">图书</div>
+        <div class="add-list">
+            {{ range .AddOptions }}
+            <div class="add-item">
+                <input type="radio" id="{{.SubjectType}}" name="subject_type" value="{{ .SubjectType }}" {{ if eq $.AddType .SubjectType }}checked{{ end }} hidden>
+                <label for="{{ .SubjectType }}">
+                    <div class="add-selection">
+                        <img src="/static/icons/icon-{{ .SubjectType }}.svg" alt="{{ .SubjectType }}" width="50" height="50">
+                        <div class="note-color">{{ .TypeZH }}</div>
                     </div>
                 </label>
             </div>
-        
-            <div class="home-item">
-                <input type="radio" id="movie" name="subject_type" value="movie" {{if eq .SubjectType "movie" }}checked{{end}} hidden>
-                <label for="movie">
-                    <div class="home-item-cover add-selection">
-                        <img src="/static/icons/icon-movie.svg" alt="movie" width="50" height="50">
-                        <div class="home-item-name note-color">电影</div>
-                    </div>
-                </label>
-            </div>
-        
-            <div class="home-item">
-                <input type="radio" id="tv" name="subject_type" value="tv" {{if eq .SubjectType "tv" }}checked{{end}} hidden>
-                <label for="tv">
-                    <div class="home-item-cover add-selection">
-                        <img src="/static/icons/icon-tv.svg" alt="tv" width="50" height="50">
-                        <div class="home-item-name note-color">剧集</div>
-                    </div>
-                </label>
-            </div>
-        
-            <div class="home-item">
-                <input type="radio" id="anime" name="subject_type" value="anime" {{if eq .SubjectType "anime" }}checked{{end}} hidden>
-                <label for="anime">
-                    <div class="home-item-cover add-selection">
-                        <img src="/static/icons/icon-anime.svg" alt="anime" width="50" height="50">
-                        <div class="home-item-name note-color">番剧</div>
-                    </div>
-                </label>
-            </div>
-
-            <div class="home-item">
-                <input type="radio" id="game" name="subject_type" value="game" {{if eq .SubjectType "game" }}checked{{end}} hidden>
-                <label for="game">
-                    <div class="home-item-cover add-selection">
-                        <img src="/static/icons/icon-game.svg" alt="game" width="50" height="50">
-                        <div class="home-item-name note-color">游戏</div>
-                    </div>
-                </label>
-            </div>
+            {{ end }}
         </div>
         <div class="edit-detail add-pre">
             <p>2. 尝试自动获取数据:</p>

@@ -76,26 +76,49 @@ type SearchView struct {
 	Subjects    []CategoryViewItem
 }
 
+type AddOptions struct {
+	SubjectType string
+	TypeZH      string
+}
+
+type AddView struct {
+	PageTitle  string
+	Category   string
+	AddType    string
+	AddOptions []AddOptions
+}
+
+type HomeLastItem struct {
+	Title      string
+	SubjectURL string
+	Status     int
+	Date       string
+}
+
+type HomeSummary struct {
+	MonthCount    int
+	HalfYearCount int
+	YearCount     int
+	LastItem      HomeLastItem
+}
+
 type HomeViewItem struct {
 	SubjectURL string
-	Title      string
-	MarkDate   string
-	IsDoing    bool
 	ImageURL   string
+}
+
+type HomeViewType struct {
+	SubjectType string
+	TypeZH      string
+	ActionZH    string
+	UnitZH      string
+	Items       []HomeViewItem
+	Summary     HomeSummary
 }
 
 type HomeView struct {
 	Category     string
 	Today        string
 	PageTitle    string
-	FewBooks     bool
-	FewMovies    bool
-	FewTVs       bool
-	FewAnimes    bool
-	FewGames     bool
-	RecentBooks  []HomeViewItem
-	RecentMovies []HomeViewItem
-	RecentTVs    []HomeViewItem
-	RecentAnimes []HomeViewItem
-	RecentGames  []HomeViewItem
+	RecentGroups []HomeViewType
 }

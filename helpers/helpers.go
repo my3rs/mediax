@@ -25,22 +25,47 @@ func StringToInt(value string) (int, error) {
 	return result, nil
 }
 
-func GetSubjectType(subjectType string) string {
+func GetTypeZH(subjectType string) string {
 	switch subjectType {
 	case "book":
-		subjectType = "图书"
+		return "图书"
 	case "movie":
-		subjectType = "电影"
+		return "电影"
 	case "tv":
-		subjectType = "剧集"
+		return "剧集"
 	case "anime":
-		subjectType = "番剧"
+		return "番剧"
 	case "game":
-		subjectType = "游戏"
+		return "游戏"
 	default:
-		subjectType = "未知"
+		return "未知"
 	}
-	return subjectType
+}
+
+func GetActionZH(subjectType string) string {
+	switch subjectType {
+	case "book":
+		return "阅读"
+	case "movie", "tv", "anime":
+		return "观看"
+	case "game":
+		return "游玩"
+	default:
+		return "操作"
+	}
+}
+
+func GetUnitZH(subjectType string) string {
+	switch subjectType {
+	case "book":
+		return "本"
+	case "movie", "tv", "anime":
+		return "部"
+	case "game":
+		return "款"
+	default:
+		return ""
+	}
 }
 
 func MD5Hash(text string) string {

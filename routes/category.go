@@ -99,7 +99,7 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.CategoryView{
-		PageTitle:   helpers.GetSubjectType(category),
+		PageTitle:   helpers.GetTypeZH(category),
 		Category:    category,
 		Status:      status,
 		TotalCounts: statusCounts.All,
