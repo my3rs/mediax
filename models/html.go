@@ -68,7 +68,7 @@ type SearchView struct {
 	PageTitle   string
 	Query       string
 	QueryType   string
-	TotalCount  int64
+	TotalCount  int
 	CurrentPage int
 	TotalPages  int
 	PageNumbers []int

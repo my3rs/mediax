@@ -6,44 +6,35 @@ import (
 
 	"github.com/scenery/mediax/cache"
 	"github.com/scenery/mediax/database"
+	"github.com/scenery/mediax/helpers"
 	"github.com/scenery/mediax/models"
 )
 
-func GetSearchResult(query string, page int, pageSize int) ([]models.SubjectSummary, int64, error) {
+func GetSearchResult(query string, page int, pageSize int) ([]models.SubjectSummary, int, error) {
 	db := database.GetDB()
 	var subjects []models.SubjectSummary
-	var total int64
+	var total int
 	likeQuery := "%" + query + "%"
 
-	cacheSearchKey := fmt.Sprintf("search:%s:%d", query, page)
-	cacheCountKey := fmt.Sprintf("count:search:%s", query)
+	queryHash := helpers.MD5Hash(query)
+	cacheKey := fmt.Sprintf("search:%s", queryHash)
 
-	if cachedCounts, found := cache.GetCache(cacheCountKey); found {
-		total = cachedCounts.(int64)
-	} else {
-		err := db.Table("subject").
-			Where("title LIKE ?", likeQuery).
-			Count(&total).Error
-		if err != nil {
-			return nil, 0, err
-		}
-		cache.SetCache(cacheCountKey, total, 10*time.Minute)
+	if cachedQuery, found := cache.GetCache(cacheKey); found {
+		subjects := cachedQuery.([]models.SubjectSummary)
+		total = len(subjects)
+		return subjects, total, nil
 	}
 
-	if cachedSubjects, found := cache.GetCache(cacheSearchKey); found {
-		subjects = cachedSubjects.([]models.SubjectSummary)
-	} else {
-		offset := (page - 1) * pageSize
-		err := db.Table("subject").
-			Where("title LIKE ?", likeQuery).
-			Offset(offset).
-			Limit(pageSize).
-			Find(&subjects).Error
-		if err != nil {
-			return nil, 0, err
-		}
-		cache.SetCache(cacheSearchKey, subjects, 10*time.Minute)
+	err := db.Table("subject").
+		Where("title LIKE ?", likeQuery).
+		Or("alt_title LIKE ?", likeQuery).
+		Order("created_at DESC").
+		Find(&subjects).Error
+	if err != nil {
+		return nil, 0, err
 	}
 
+	cache.SetCache(cacheKey, subjects, 10*time.Minute)
+	total = len(subjects)
 	return subjects, total, nil
 }

@@ -48,15 +48,25 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if subjectType != "all" {
-		var filteredSubjects []models.SubjectSummary
+		var filtered []models.SubjectSummary
 		for _, subject := range subjects {
 			if subject.SubjectType == subjectType {
-				filteredSubjects = append(filteredSubjects, subject)
+				filtered = append(filtered, subject)
 			}
 		}
-		subjects = filteredSubjects
-		total = int64(len(filteredSubjects))
+		subjects = filtered
+		total = len(subjects)
 	}
+
+	start := (page - 1) * pageSize
+	end := start + pageSize
+	if start > total {
+		start = total
+	}
+	if end > total {
+		end = total
+	}
+	pagedSubjects := subjects[start:end]
 
 	totalPages := int(math.Ceil(float64(total) / float64(pageSize)))
 	pageParams := fmt.Sprintf("&q=%s&subject_type=%s", query, subjectType)
@@ -71,7 +81,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		TotalPages:  totalPages,
 		PageNumbers: generatePageNumbers(page, totalPages),
 		PageParams:  template.URL(pageParams),
-		Subjects:    processCategoryHTML(subjects),
+		Subjects:    processCategoryHTML(pagedSubjects),
 	}
 
 	renderPage(w, "search.html", data)

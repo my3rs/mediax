@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"crypto/md5"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -39,4 +41,9 @@ func GetSubjectType(subjectType string) string {
 		subjectType = "未知"
 	}
 	return subjectType
+}
+
+func MD5Hash(text string) string {
+	hash := md5.Sum([]byte(text))
+	return fmt.Sprintf("%x", hash)
 }
