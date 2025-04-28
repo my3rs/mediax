@@ -2,6 +2,7 @@ package models
 
 import "html/template"
 
+// Header
 type HeaderOption struct {
 	Category     string
 	CategoryName string
@@ -13,26 +14,49 @@ type Header struct {
 	CurrentName string
 }
 
+// Home Page
+type HomeLastItem struct {
+	Title      string
+	SubjectURL string
+	Status     int
+	Date       string
+}
+
+type HomeSummary struct {
+	MonthCount    int
+	HalfYearCount int
+	YearCount     int
+	LastItem      HomeLastItem
+}
+
+type HomeViewItem struct {
+	SubjectURL string
+	ImageURL   string
+}
+
+type HomeViewType struct {
+	SubjectType            string
+	SubjectTypeName        string
+	SubjectActionFullName  string
+	SubjectActionShortName string
+	SubjectUnitName        string
+	Items                  []HomeViewItem
+	Summary                HomeSummary
+}
+
+type HomeView struct {
+	Header       Header
+	Today        string
+	PageTitle    string
+	RecentGroups []HomeViewType
+}
+
+// Category Page
 type CategoryInfo struct {
 	Name        string
 	Unit        string
 	ActionFull  string
 	ActionShort string
-}
-
-type SubjectView struct {
-	Header          Header
-	PageTitle       string
-	ManageType      int
-	CreatorLabel    string
-	PressLabel      string
-	PubDateLabel    string
-	SummaryLabel    string
-	StatusText      string
-	RatingStar      int
-	ImageURL        string
-	ExternalURLIcon template.HTML
-	Subject         Subject
 }
 
 type CategoryViewItem struct {
@@ -81,6 +105,37 @@ type CategoryView struct {
 	Subjects    []CategoryViewItem
 }
 
+type SubjectSummary struct {
+	UUID        string
+	SubjectType string
+	Title       string
+	AltTitle    string
+	Creator     string
+	Press       string
+	Status      int
+	Rating      int
+	HasImage    int
+	PubDate     string
+	MarkDate    string
+}
+
+// Subject Page
+type SubjectView struct {
+	Header          Header
+	PageTitle       string
+	ManageType      int
+	CreatorLabel    string
+	PressLabel      string
+	PubDateLabel    string
+	SummaryLabel    string
+	StatusText      string
+	RatingStar      int
+	ImageURL        string
+	ExternalURLIcon template.HTML
+	Subject         Subject
+}
+
+// Search Page
 type SearchView struct {
 	Header      Header
 	PageTitle   string
@@ -94,43 +149,44 @@ type SearchView struct {
 	Subjects    []CategoryViewItem
 }
 
+// Manage Page
+// ManageType - 1: 显示, 2: 编辑, 3: 新增(手动), 4: 新增(自动)
 type AddView struct {
 	Header    Header
 	PageTitle string
 }
 
-type HomeLastItem struct {
-	Title      string
-	SubjectURL string
-	Status     int
-	Date       string
+type ManageCategoryOption struct {
+	Value    string
+	Label    string
+	Selected bool
 }
 
-type HomeSummary struct {
-	MonthCount    int
-	HalfYearCount int
-	YearCount     int
-	LastItem      HomeLastItem
+type ManageOption struct {
+	Value    int
+	Label    string
+	Selected bool
 }
 
-type HomeViewItem struct {
-	SubjectURL string
-	ImageURL   string
-}
-
-type HomeViewType struct {
-	SubjectType            string
-	SubjectTypeName        string
-	SubjectActionFullName  string
-	SubjectActionShortName string
-	SubjectUnitName        string
-	Items                  []HomeViewItem
-	Summary                HomeSummary
-}
-
-type HomeView struct {
-	Header       Header
-	Today        string
-	PageTitle    string
-	RecentGroups []HomeViewType
+type ManageView struct {
+	Header           Header
+	PageTitle        string
+	ManageType       int
+	Subject          Subject
+	CreatorLabel     string
+	PressLabel       string
+	PubDateLabel     string
+	SummaryLabel     string
+	StatusText       string
+	RatingStar       int
+	ImageURL         string
+	ExternalURLIcon  template.HTML
+	SubmitURL        string
+	CancelURL        string
+	ButtonText       string
+	CancelText       string
+	ReadOnlyExternal bool
+	CategoryOptions  []ManageCategoryOption
+	StatusOptions    []ManageOption
+	RatingOptions    []ManageOption
 }

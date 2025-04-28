@@ -64,7 +64,7 @@ func manualAdd(w http.ResponseWriter, subjectType string) {
 	subject.Status = 1
 	subject.Rating = 0
 	subject.MarkDate = time.Now().Format("2006-01-02")
-	data := processSingleHTML("添加"+helpers.GetSubjectTypeName(subjectType), 3, subject)
+	data := processManageHTML("添加"+helpers.GetSubjectTypeName(subjectType), 3, subject)
 	renderPage(w, "manage.html", data)
 }
 
@@ -84,7 +84,7 @@ func autoAdd(w http.ResponseWriter, subjectType, externalURL string) error {
 	subject.Status = 1
 	subject.Rating = 0
 	subject.MarkDate = time.Now().Format("2006-01-02")
-	data := processSingleHTML("添加"+helpers.GetSubjectTypeName(subjectType), 4, subject)
+	data := processManageHTML("添加"+helpers.GetSubjectTypeName(subjectType), 4, subject)
 	renderPage(w, "manage.html", data)
 	return nil
 }

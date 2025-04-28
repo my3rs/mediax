@@ -66,7 +66,7 @@ func handleEditSubject(w http.ResponseWriter, r *http.Request, uuidStr string) {
 			handleError(w, fmt.Sprint(err), "home", 500)
 			return
 		}
-		data := processSingleHTML("编辑 "+subject.Title, 2, subject)
+		data := processManageHTML("编辑 "+subject.Title, 2, subject)
 		renderPage(w, "manage.html", data)
 		return
 	case http.MethodPost:

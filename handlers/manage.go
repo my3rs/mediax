@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/scenery/mediax/cache"
 	"github.com/scenery/mediax/config"
@@ -52,25 +54,18 @@ func ManageSubject(w http.ResponseWriter, r *http.Request, uuidStr string) (stri
 		}
 	}
 
-	requiredFields := []string{"manage_type", "subject_type", "title", "status", "rating", "mark_date"}
-	for _, field := range requiredFields {
-		value, exists := data[field]
-		if !exists || value == "" {
-			return "", fmt.Errorf("missing required field: %s", field)
-		}
+	if err := ValidateFormFields(data); err != nil {
+		return "", err
 	}
 
+	manageType, _ := helpers.StringToInt(data["manage_type"])
 	subjectType := data["subject_type"]
-	externalURL := data["external_url"]
-
-	manageType, err := helpers.StringToInt(data["manage_type"])
-	if err != nil {
-		return "", fmt.Errorf("invalid manage type: %v", err)
-	}
 
 	if manageType == 3 || manageType == 4 {
 		uuidStr = helpers.GenerateUUID()
 	}
+
+	externalURL := data["external_url"]
 
 	hasImage := getHasImage(manageType, subjectType, uuidStr, externalURL)
 	file, _, err := r.FormFile("image")
@@ -261,4 +256,76 @@ func CheckSubjectExistence(externalURL string) error {
 		return fmt.Errorf("subject with external URL <%s> already exists: %s", externalURL, existUUID[0])
 	}
 	return nil
+}
+
+func ValidateFormFields(data map[string]string) error {
+	requiredFields := []string{"manage_type", "subject_type", "title", "status", "rating", "mark_date"}
+
+	for _, field := range requiredFields {
+		value, exists := data[field]
+		if !exists || strings.TrimSpace(value) == "" {
+			return fmt.Errorf("missing required field: %s", field)
+		}
+	}
+
+	validators := []struct {
+		value    string
+		validate func(string) (bool, error)
+	}{
+		{data["subject_type"], ValidateSubjectType},
+		{data["manage_type"], ValidateManageType},
+		{data["status"], ValidateStatus},
+		{data["rating"], ValidateRating},
+		{data["mark_date"], ValidateMarkDate},
+	}
+
+	for _, v := range validators {
+		valid, err := v.validate(v.value)
+		if err != nil || !valid {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func ValidateSubjectType(subjectType string) (bool, error) {
+	for _, c := range helpers.GetCategories() {
+		if c == subjectType {
+			return true, nil
+		}
+	}
+	return false, errors.New("invalid subject type")
+}
+
+func ValidateManageType(value string) (bool, error) {
+	i, err := helpers.StringToInt(value)
+	if err != nil || (i != 2 && i != 3 && i != 4) {
+		return false, errors.New("invalid manage type: must be 2, 3, or 4")
+	}
+	return true, nil
+}
+
+func ValidateStatus(value string) (bool, error) {
+	i, err := helpers.StringToInt(value)
+	if err != nil || i < 1 || i > 5 {
+		return false, errors.New("invalid status: must be between 1 and 5")
+	}
+	return true, nil
+}
+
+func ValidateRating(value string) (bool, error) {
+	i, err := helpers.StringToInt(value)
+	if err != nil || i < 0 || i > 10 {
+		return false, errors.New("invalid rating: must be between 0 and 10")
+	}
+	return true, nil
+}
+
+func ValidateMarkDate(value string) (bool, error) {
+	_, err := time.Parse("2006-01-02", value)
+	if err != nil {
+		return false, errors.New("invalid mark date: format must be YYYY-MM-DD")
+	}
+	return true, nil
 }

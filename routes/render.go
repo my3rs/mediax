@@ -60,10 +60,25 @@ func handleError(w http.ResponseWriter, errorMessage, targetURL string, statusCo
 	}
 }
 
+func processHomeHTML(subjects []models.SubjectSummary) []models.HomeViewItem {
+	var processedSubjects []models.HomeViewItem
+
+	for _, subject := range subjects {
+		imageURL := getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
+
+		processedSubjects = append(processedSubjects, models.HomeViewItem{
+			SubjectURL: fmt.Sprintf("/%s/%s", subject.SubjectType, subject.UUID),
+			ImageURL:   imageURL,
+		})
+	}
+
+	return processedSubjects
+}
+
 func processSingleHTML(pageTitle string, manageType int, subject models.Subject) models.SubjectView {
 	imageURL := getImageURL(manageType, subject.HasImage, subject.SubjectType, subject.UUID, subject.ExternalURL)
 
-	labels := processSubjectLabel(subject.SubjectType, subject.Status)
+	labels := getSubjectLabel(subject.SubjectType, subject.Status)
 	statusText := labels["statusText"]
 	creatorLabel := labels["creatorLabel"]
 	pressLabel := labels["pressLabel"]
@@ -100,7 +115,7 @@ func processCategoryHTML(subjects []models.SubjectSummary) []models.CategoryView
 	for _, subject := range subjects {
 		imageURL := getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
 
-		labels := processSubjectLabel(subject.SubjectType, subject.Status)
+		labels := getSubjectLabel(subject.SubjectType, subject.Status)
 		statusText := labels["statusText"]
 		creatorLabel := labels["creatorLabel"]
 		pressLabel := labels["pressLabel"]
@@ -127,22 +142,104 @@ func processCategoryHTML(subjects []models.SubjectSummary) []models.CategoryView
 	return processedSubjects
 }
 
-func processHomeHTML(subjects []models.SubjectSummary) []models.HomeViewItem {
-	var processedSubjects []models.HomeViewItem
+func processManageHTML(pageTitle string, manageType int, subject models.Subject) models.ManageView {
+	imageURL := getImageURL(manageType, subject.HasImage, subject.SubjectType, subject.UUID, subject.ExternalURL)
+	labels := getSubjectLabel(subject.SubjectType, subject.Status)
 
-	for _, subject := range subjects {
-		imageURL := getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
+	var submitURL, cancelURL, buttonText, cancelText string
+	var readOnlyExternal bool
 
-		processedSubjects = append(processedSubjects, models.HomeViewItem{
-			SubjectURL: fmt.Sprintf("/%s/%s", subject.SubjectType, subject.UUID),
-			ImageURL:   imageURL,
-		})
+	switch manageType {
+	case 2: // 编辑
+		submitURL = fmt.Sprintf("/%s/%s/edit", subject.SubjectType, subject.UUID)
+		cancelURL = fmt.Sprintf("/%s/%s", subject.SubjectType, subject.UUID)
+		buttonText = "提交修改"
+		cancelText = "放弃修改"
+	case 3, 4: // 新增
+		submitURL = "/add/subject"
+		cancelURL = "/add"
+		buttonText = "确认添加"
+		cancelText = "放弃添加"
+	default:
+		submitURL = "#"
+		cancelURL = "#"
+		buttonText = "提交"
+		cancelText = "取消"
 	}
 
-	return processedSubjects
+	readOnlyExternal = (manageType == 4) || (subject.ExternalURL != "")
+
+	return models.ManageView{
+		Header:           helpers.GetHeader(subject.SubjectType),
+		PageTitle:        pageTitle,
+		ManageType:       manageType,
+		Subject:          subject,
+		CreatorLabel:     labels["creatorLabel"],
+		PressLabel:       labels["pressLabel"],
+		PubDateLabel:     labels["pubDateLabel"],
+		SummaryLabel:     labels["summaryLabel"],
+		StatusText:       labels["statusText"],
+		RatingStar:       subject.Rating * 5,
+		ImageURL:         imageURL,
+		ExternalURLIcon:  getExternalURLIcon(subject.ExternalURL),
+		SubmitURL:        submitURL,
+		CancelURL:        cancelURL,
+		ButtonText:       buttonText,
+		CancelText:       cancelText,
+		ReadOnlyExternal: readOnlyExternal,
+		CategoryOptions:  getCategoryOptions(subject.SubjectType),
+		StatusOptions:    getStatusOptions(subject.Status, labels["statusType"]),
+		RatingOptions:    getRatingOptions(subject.Rating),
+	}
 }
 
-func processSubjectLabel(subjectType string, status int) map[string]string {
+func getCategoryOptions(selectedType string) []models.ManageCategoryOption {
+	types := helpers.GetCategories()
+	opts := make([]models.ManageCategoryOption, 0, len(types))
+	for _, category := range types {
+		opts = append(opts, models.ManageCategoryOption{
+			Value:    category,
+			Label:    helpers.GetSubjectTypeName(category),
+			Selected: category == selectedType,
+		})
+	}
+	return opts
+}
+
+func getStatusOptions(selected int, statusType string) []models.ManageOption {
+	labels := []string{
+		fmt.Sprintf("想%s", statusType),
+		fmt.Sprintf("在%s", statusType),
+		fmt.Sprintf("%s过", statusType),
+		"搁置",
+		"抛弃",
+	}
+	opts := make([]models.ManageOption, 0, len(labels))
+	for i, label := range labels {
+		opts = append(opts, models.ManageOption{
+			Value:    i + 1,
+			Label:    label,
+			Selected: selected == i+1,
+		})
+	}
+	return opts
+}
+
+func getRatingOptions(selected int) []models.ManageOption {
+	opts := []models.ManageOption{
+		{Value: 0, Label: "未评分", Selected: selected == 0},
+	}
+	for i := 1; i <= 10; i++ {
+		opts = append(opts, models.ManageOption{
+			Value:    i,
+			Label:    fmt.Sprintf("%d 分", i),
+			Selected: selected == i,
+		})
+	}
+	return opts
+}
+
+func getSubjectLabel(subjectType string, status int) map[string]string {
 	result := make(map[string]string)
 
 	statusType := "看"
@@ -185,6 +282,7 @@ func processSubjectLabel(subjectType string, status int) map[string]string {
 		statusText = "未知"
 	}
 
+	result["statusType"] = statusType
 	result["statusText"] = statusText
 	result["creatorLabel"] = creatorLabel
 	result["pressLabel"] = pressLabel
@@ -192,20 +290,6 @@ func processSubjectLabel(subjectType string, status int) map[string]string {
 	result["summaryLabel"] = summaryLabel
 
 	return result
-}
-
-func getImageURL(manageType, hasImage int, subjectType, uuid, externalURL string) string {
-	imgURL := "/static/default-cover.jpg"
-	if hasImage == 1 {
-		imgURL = fmt.Sprintf("/%s/%s/%s.jpg", config.ImageDir, subjectType, uuid)
-	}
-	if manageType == 4 {
-		imageName, err := dataops.PreDownloadImageName(externalURL)
-		if err == nil {
-			imgURL = fmt.Sprintf("/%s/temp/%s", config.ImageDir, imageName)
-		}
-	}
-	return imgURL
 }
 
 func getExternalURLIcon(externalURL string) template.HTML {
@@ -230,6 +314,20 @@ func getExternalURLIcon(externalURL string) template.HTML {
 	default:
 		return template.HTML(fmt.Sprintf(`<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>`, externalURL, externalURL))
 	}
+}
+
+func getImageURL(manageType, hasImage int, subjectType, uuid, externalURL string) string {
+	imgURL := "/static/default-cover.jpg"
+	if hasImage == 1 {
+		imgURL = fmt.Sprintf("/%s/%s/%s.jpg", config.ImageDir, subjectType, uuid)
+	}
+	if manageType == 4 {
+		imageName, err := dataops.PreDownloadImageName(externalURL)
+		if err == nil {
+			imgURL = fmt.Sprintf("/%s/temp/%s", config.ImageDir, imageName)
+		}
+	}
+	return imgURL
 }
 
 func generatePageNumbers(current, total int) []int {

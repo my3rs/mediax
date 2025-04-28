@@ -25,24 +25,3 @@ type Subject struct {
 func (Subject) TableName() string {
 	return "subject"
 }
-
-type SubjectSummary struct {
-	UUID        string
-	SubjectType string
-	Title       string
-	AltTitle    string
-	Creator     string
-	Press       string
-	Status      int
-	Rating      int
-	HasImage    int
-	PubDate     string
-	MarkDate    string
-}
-
-// ManageType - 1: 显示, 2: 编辑, 3: 新增(手动), 4: 新增(自动)
-type SubjectManagePage struct {
-	PageTitle  string
-	ManageType int
-	Subject    interface{}
-}
