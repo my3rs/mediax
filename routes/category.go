@@ -89,17 +89,18 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.CategoryView{
-		Header:      helpers.GetHeader(category),
-		PageTitle:   helpers.GetSubjectTypeName(category),
-		Status:      status,
-		TotalCounts: statusCounts.All,
-		StatusList:  statusList,
-		SortBy:      sortBy,
-		CurrentPage: page,
-		TotalPages:  totalPages,
-		PageNumbers: generatePageNumbers(page, totalPages),
-		PageParams:  template.URL(pageParams),
-		Subjects:    processCategoryHTML(subjects),
+		Header:       helpers.GetHeader(category),
+		PageTitle:    helpers.GetSubjectTypeName(category),
+		CategoryIcon: template.HTML(helpers.GetCategoryIcon(category, "28", "currentColor")),
+		Status:       status,
+		TotalCounts:  statusCounts.All,
+		StatusList:   statusList,
+		SortBy:       sortBy,
+		CurrentPage:  page,
+		TotalPages:   totalPages,
+		PageNumbers:  generatePageNumbers(page, totalPages),
+		PageParams:   template.URL(pageParams),
+		Subjects:     processCategoryHTML(subjects),
 	}
 
 	renderPage(w, "category.html", data)

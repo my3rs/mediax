@@ -40,6 +40,7 @@ type HomeViewType struct {
 	SubjectActionFullName  string
 	SubjectActionShortName string
 	SubjectUnitName        string
+	CategoryIcon           template.HTML
 	Items                  []HomeViewItem
 	Summary                HomeSummary
 }
@@ -92,17 +93,18 @@ type StatusLabel struct {
 }
 
 type CategoryView struct {
-	Header      Header
-	PageTitle   string
-	Status      int
-	TotalCounts int64
-	StatusList  []StatusLabel
-	SortBy      int
-	CurrentPage int
-	TotalPages  int
-	PageNumbers []int
-	PageParams  template.URL
-	Subjects    []CategoryViewItem
+	Header       Header
+	PageTitle    string
+	CategoryIcon template.HTML
+	Status       int
+	TotalCounts  int64
+	StatusList   []StatusLabel
+	SortBy       int
+	CurrentPage  int
+	TotalPages   int
+	PageNumbers  []int
+	PageParams   template.URL
+	Subjects     []CategoryViewItem
 }
 
 type SubjectSummary struct {

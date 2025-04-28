@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -29,7 +30,7 @@ func handleHomePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var recentGroups []models.HomeViewType
-	subjectTypes := []string{"book", "movie", "tv", "anime", "game"}
+	subjectTypes := helpers.GetCategories()
 	for _, subjectType := range subjectTypes {
 		subjectActionFullName, subjectActionShortName := helpers.GetSubjectActionName(subjectType)
 		summary, _ := handlers.GetHomeSummary(subjectType)
@@ -39,6 +40,7 @@ func handleHomePage(w http.ResponseWriter, r *http.Request) {
 			SubjectActionFullName:  subjectActionFullName,
 			SubjectActionShortName: subjectActionShortName,
 			SubjectUnitName:        helpers.GetSubjectUnitName(subjectType),
+			CategoryIcon:           template.HTML(helpers.GetCategoryIcon(subjectType, "30", fmt.Sprintf("var(--%s-color)", subjectType))),
 			Items:                  processHomeHTML(recentSubjects[subjectType]),
 			Summary:                summary,
 		})

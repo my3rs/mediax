@@ -5,10 +5,10 @@
     <section class="home-section">
         <div class="home-section-heading">
             <div class="page-heading">
-                <img src="/static/icons/icon-{{ .SubjectType }}.svg" width="30px">
+                {{ .CategoryIcon }}
                 <a href="/{{ .SubjectType }}"><h2>最近{{ .SubjectTypeName }}</h2></a>
             </div>
-            <a href="/add?subject_type={{ .SubjectType }}">
+            <a class="home-add-button" href="/add?subject_type={{ .SubjectType }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" fill="#f5f5f7"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6 13h-5v5h-2v-5h-5v-2h5v-5h2v5h5v2z"/></svg>
             </a>
         </div>

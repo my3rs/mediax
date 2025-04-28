@@ -8,11 +8,10 @@
             <div class="add-item">
                 <input type="radio" id="{{ .Category }}" name="subject_type" value="{{ .Category }}" {{ if eq $.Header.Current .Category }}checked{{ end }} hidden>
                 <label for="{{ .Category }}">
-                    <div class="add-selection">
-                        <img src="/static/icons/icon-{{ .Category }}.svg" alt="{{ .Category }}" width="50" height="50">
-                        <div class="note-color">{{ .CategoryName }}</div>
-                    </div>
+                    <div class="add-dot"></div>
+                    <span>{{ .CategoryName }}</span>
                 </label>
+                <span class="add-check-icon"></span>
             </div>
             {{ end }}
         </div>

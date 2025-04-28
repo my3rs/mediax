@@ -7,6 +7,7 @@ import (
 
 	"github.com/scenery/mediax/cache"
 	"github.com/scenery/mediax/database"
+	"github.com/scenery/mediax/helpers"
 	"github.com/scenery/mediax/models"
 	"gorm.io/gorm"
 )
@@ -14,7 +15,7 @@ import (
 func GetRecentSubjects(limit int) (map[string][]models.SubjectSummary, error) {
 	db := database.GetDB()
 	results := make(map[string][]models.SubjectSummary)
-	subjectTypes := []string{"book", "movie", "tv", "anime", "game"}
+	subjectTypes := helpers.GetCategories()
 
 	for _, subjectType := range subjectTypes {
 		cacheKey := fmt.Sprintf("home:%s", subjectType)
