@@ -21,6 +21,7 @@ func GetSubjectsByType(subjectType string, status, page, pageSize, sortBy int) (
 		}
 	}
 
+	// 索引顺序 subject_type > mark_date/created_at > status
 	query := db.
 		Table("subject").
 		Where("subject_type = ?", subjectType)
@@ -29,11 +30,11 @@ func GetSubjectsByType(subjectType string, status, page, pageSize, sortBy int) (
 	case 2:
 		query = query.Order("mark_date DESC")
 	case 3:
-		query = query.Order("id ASC")
+		query = query.Order("created_at ASC")
 	case 4:
 		query = query.Order("mark_date ASC")
 	default:
-		query = query.Order("id DESC")
+		query = query.Order("created_at DESC")
 	}
 
 	if status > 0 {

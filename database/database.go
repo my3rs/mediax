@@ -46,9 +46,15 @@ func InitDB(migrate bool) {
 			log.Fatalf("Failed to migrate database: %v", err)
 		}
 
-		// 删除过时的 title 索引
+		// 删除过时的索引 v0.6.0
 		if db.Migrator().HasIndex(&models.Subject{}, "idx_title") {
 			db.Migrator().DropIndex(&models.Subject{}, "idx_title")
+		}
+		if db.Migrator().HasIndex(&models.Subject{}, "idx_id_type") {
+			db.Migrator().DropIndex(&models.Subject{}, "idx_id_type")
+		}
+		if db.Migrator().HasIndex(&models.Subject{}, "idx_type_status_id") {
+			db.Migrator().DropIndex(&models.Subject{}, "idx_type_status_id")
 		}
 
 		fmt.Println("Database migration successful.")
