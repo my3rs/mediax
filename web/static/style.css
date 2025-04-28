@@ -1002,4 +1002,15 @@ a.subject-outlink {
     .add-list {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     }
+
+    .subject-list-title {
+        @supports (-webkit-line-clamp: 2) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: initial;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+    }
 }
