@@ -72,7 +72,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	pageParams := fmt.Sprintf("&q=%s&subject_type=%s", query, subjectType)
 
 	data := models.SearchView{
-		Category:    "search",
+		Header:      helpers.GetHeader("search"),
 		PageTitle:   "搜索结果 " + query,
 		Query:       query,
 		QueryType:   subjectType,

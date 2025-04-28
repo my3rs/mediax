@@ -2,12 +2,10 @@
 <header>
     <div class="header-container">
         <nav class="site-nav">
-            <a class='site-nav-link{{ if eq .Category "" }} nav-active{{end}}' href="/home">mediaX</a>
-            <a class='site-nav-link{{ if eq .Category "book" }} nav-active{{end}}' href="/book">图书</a>
-            <a class='site-nav-link{{ if eq .Category "movie" }} nav-active{{end}}' href="/movie">电影</a>
-            <a class='site-nav-link{{ if eq .Category "tv" }} nav-active{{end}}' href="/tv">剧集</a>
-            <a class='site-nav-link{{ if eq .Category "anime" }} nav-active{{end}}' href="/anime">番剧</a>
-            <a class='site-nav-link{{ if eq .Category "game" }} nav-active{{end}}' href="/game">游戏</a>
+            <a class='site-nav-link{{ if eq .Header.Current "home" }} nav-active{{end}}' href="/home">mediaX</a>
+            {{ range .Header.Options }}
+                <a class='site-nav-link{{ if eq $.Header.Current .Category }} nav-active{{end}}' href="/{{ .Category }}">{{ .CategoryName }}</a>
+            {{ end }}
         </nav>
         <input type="checkbox" id="search-toggle" style="display:none">
         <label for="search-toggle" class="search-icon-toggle site-nav-search">

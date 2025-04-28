@@ -59,8 +59,6 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 	case 5:
 		totalPages = getTotalPages(statusCounts.Dropped)
 	}
-
-	// 前端未限制跳转页数范围
 	if page > totalPages {
 		page = 1
 	}
@@ -72,20 +70,12 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var statusType string
-	switch category {
-	case "book":
-		statusType = "读"
-	case "game":
-		statusType = "玩"
-	default:
-		statusType = "看"
-	}
+	_, subjectActionShortName := helpers.GetSubjectActionName(category)
 
 	statusList := []models.StatusLabel{
-		{Value: 1, Label: fmt.Sprintf("想%s", statusType), Count: statusCounts.Todo},
-		{Value: 2, Label: fmt.Sprintf("在%s", statusType), Count: statusCounts.Doing},
-		{Value: 3, Label: fmt.Sprintf("%s过", statusType), Count: statusCounts.Done},
+		{Value: 1, Label: fmt.Sprintf("想%s", subjectActionShortName), Count: statusCounts.Todo},
+		{Value: 2, Label: fmt.Sprintf("在%s", subjectActionShortName), Count: statusCounts.Doing},
+		{Value: 3, Label: fmt.Sprintf("%s过", subjectActionShortName), Count: statusCounts.Done},
 		{Value: 4, Label: "搁置", Count: statusCounts.OnHold},
 		{Value: 5, Label: "抛弃", Count: statusCounts.Dropped},
 	}
@@ -99,8 +89,8 @@ func handleCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.CategoryView{
-		PageTitle:   helpers.GetTypeZH(category),
-		Category:    category,
+		Header:      helpers.GetHeader(category),
+		PageTitle:   helpers.GetSubjectTypeName(category),
 		Status:      status,
 		TotalCounts: statusCounts.All,
 		StatusList:  statusList,

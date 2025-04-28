@@ -2,8 +2,26 @@ package models
 
 import "html/template"
 
+type HeaderOption struct {
+	Category     string
+	CategoryName string
+}
+
+type Header struct {
+	Options     []HeaderOption
+	Current     string
+	CurrentName string
+}
+
+type CategoryInfo struct {
+	Name        string
+	Unit        string
+	ActionFull  string
+	ActionShort string
+}
+
 type SubjectView struct {
-	Category        string
+	Header          Header
 	PageTitle       string
 	ManageType      int
 	CreatorLabel    string
@@ -50,7 +68,7 @@ type StatusLabel struct {
 }
 
 type CategoryView struct {
-	Category    string
+	Header      Header
 	PageTitle   string
 	Status      int
 	TotalCounts int64
@@ -64,7 +82,7 @@ type CategoryView struct {
 }
 
 type SearchView struct {
-	Category    string
+	Header      Header
 	PageTitle   string
 	Query       string
 	QueryType   string
@@ -76,16 +94,9 @@ type SearchView struct {
 	Subjects    []CategoryViewItem
 }
 
-type AddOptions struct {
-	SubjectType string
-	TypeZH      string
-}
-
 type AddView struct {
-	PageTitle  string
-	Category   string
-	AddType    string
-	AddOptions []AddOptions
+	Header    Header
+	PageTitle string
 }
 
 type HomeLastItem struct {
@@ -108,16 +119,17 @@ type HomeViewItem struct {
 }
 
 type HomeViewType struct {
-	SubjectType string
-	TypeZH      string
-	ActionZH    string
-	UnitZH      string
-	Items       []HomeViewItem
-	Summary     HomeSummary
+	SubjectType            string
+	SubjectTypeName        string
+	SubjectActionFullName  string
+	SubjectActionShortName string
+	SubjectUnitName        string
+	Items                  []HomeViewItem
+	Summary                HomeSummary
 }
 
 type HomeView struct {
-	Category     string
+	Header       Header
 	Today        string
 	PageTitle    string
 	RecentGroups []HomeViewType

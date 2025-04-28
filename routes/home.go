@@ -31,18 +31,21 @@ func handleHomePage(w http.ResponseWriter, r *http.Request) {
 	var recentGroups []models.HomeViewType
 	subjectTypes := []string{"book", "movie", "tv", "anime", "game"}
 	for _, subjectType := range subjectTypes {
+		subjectActionFullName, subjectActionShortName := helpers.GetSubjectActionName(subjectType)
 		summary, _ := handlers.GetHomeSummary(subjectType)
 		recentGroups = append(recentGroups, models.HomeViewType{
-			SubjectType: subjectType,
-			TypeZH:      helpers.GetTypeZH(subjectType),
-			ActionZH:    helpers.GetActionZH(subjectType),
-			UnitZH:      helpers.GetUnitZH(subjectType),
-			Items:       processHomeHTML(recentSubjects[subjectType]),
-			Summary:     summary,
+			SubjectType:            subjectType,
+			SubjectTypeName:        helpers.GetSubjectTypeName(subjectType),
+			SubjectActionFullName:  subjectActionFullName,
+			SubjectActionShortName: subjectActionShortName,
+			SubjectUnitName:        helpers.GetSubjectUnitName(subjectType),
+			Items:                  processHomeHTML(recentSubjects[subjectType]),
+			Summary:                summary,
 		})
 	}
 
 	data := models.HomeView{
+		Header:       helpers.GetHeader("home"),
 		Today:        today,
 		PageTitle:    "主页",
 		RecentGroups: recentGroups,

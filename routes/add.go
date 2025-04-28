@@ -21,18 +21,9 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		queryParams := r.URL.Query()
 		subjectType := queryParams.Get("subject_type")
 
-		subjectTypes := []string{"book", "movie", "tv", "anime", "game"}
-		var addTypeOptions []models.AddOptions
-		for _, subjectType := range subjectTypes {
-			addTypeOptions = append(addTypeOptions, models.AddOptions{
-				SubjectType: subjectType,
-				TypeZH:      helpers.GetTypeZH(subjectType),
-			})
-		}
 		data := models.AddView{
-			PageTitle:  "添加",
-			AddType:    subjectType,
-			AddOptions: addTypeOptions,
+			Header:    helpers.GetHeader(subjectType),
+			PageTitle: "添加",
 		}
 		renderPage(w, "add.html", data)
 	case http.MethodPost:
@@ -73,7 +64,7 @@ func manualAdd(w http.ResponseWriter, subjectType string) {
 	subject.Status = 1
 	subject.Rating = 0
 	subject.MarkDate = time.Now().Format("2006-01-02")
-	data := processSingleHTML("添加"+helpers.GetTypeZH(subjectType), 3, subject)
+	data := processSingleHTML("添加"+helpers.GetSubjectTypeName(subjectType), 3, subject)
 	renderPage(w, "manage.html", data)
 }
 
@@ -93,7 +84,7 @@ func autoAdd(w http.ResponseWriter, subjectType, externalURL string) error {
 	subject.Status = 1
 	subject.Rating = 0
 	subject.MarkDate = time.Now().Format("2006-01-02")
-	data := processSingleHTML("添加"+helpers.GetTypeZH(subjectType), 4, subject)
+	data := processSingleHTML("添加"+helpers.GetSubjectTypeName(subjectType), 4, subject)
 	renderPage(w, "manage.html", data)
 	return nil
 }

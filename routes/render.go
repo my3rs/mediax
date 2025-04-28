@@ -9,6 +9,7 @@ import (
 
 	"github.com/scenery/mediax/config"
 	"github.com/scenery/mediax/dataops"
+	"github.com/scenery/mediax/helpers"
 	"github.com/scenery/mediax/models"
 )
 
@@ -70,7 +71,7 @@ func processSingleHTML(pageTitle string, manageType int, subject models.Subject)
 	summaryLabel := labels["summaryLabel"]
 
 	processedSubject := models.SubjectView{
-		Category:     subject.SubjectType,
+		Header:       helpers.GetHeader(subject.SubjectType),
 		PageTitle:    pageTitle,
 		ManageType:   manageType,
 		CreatorLabel: creatorLabel,

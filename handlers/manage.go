@@ -154,7 +154,7 @@ func updateSubject(uuidStr string, data map[string]string, hasImage int) error {
 
 	if subjectTypeOld != subjectTypeNew {
 		dataops.MoveDownloadedImage(subjectTypeOld, subjectTypeNew, uuidStr)
-
+		cache.ClearPageCache(subjectTypeNew)
 		cache.ClearCommonCache(subjectTypeOld)
 		cache.ClearCommonCache(subjectTypeNew)
 	}

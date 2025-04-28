@@ -4,13 +4,13 @@
     <p>1. 选择添加的类型:</p>
     <form id="mediaForm" action="/add" method="POST">
         <div class="add-list">
-            {{ range .AddOptions }}
+            {{ range .Header.Options }} 
             <div class="add-item">
-                <input type="radio" id="{{.SubjectType}}" name="subject_type" value="{{ .SubjectType }}" {{ if eq $.AddType .SubjectType }}checked{{ end }} hidden>
-                <label for="{{ .SubjectType }}">
+                <input type="radio" id="{{ .Category }}" name="subject_type" value="{{ .Category }}" {{ if eq $.Header.Current .Category }}checked{{ end }} hidden>
+                <label for="{{ .Category }}">
                     <div class="add-selection">
-                        <img src="/static/icons/icon-{{ .SubjectType }}.svg" alt="{{ .SubjectType }}" width="50" height="50">
-                        <div class="note-color">{{ .TypeZH }}</div>
+                        <img src="/static/icons/icon-{{ .Category }}.svg" alt="{{ .Category }}" width="50" height="50">
+                        <div class="note-color">{{ .CategoryName }}</div>
                     </div>
                 </label>
             </div>

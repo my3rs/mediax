@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/scenery/mediax/config"
+	"github.com/scenery/mediax/models"
 )
 
 func GenerateUUID() string {
@@ -25,47 +27,45 @@ func StringToInt(value string) (int, error) {
 	return result, nil
 }
 
-func GetTypeZH(subjectType string) string {
-	switch subjectType {
-	case "book":
-		return "图书"
-	case "movie":
-		return "电影"
-	case "tv":
-		return "剧集"
-	case "anime":
-		return "番剧"
-	case "game":
-		return "游戏"
-	default:
-		return "未知"
+func GetHeader(currentCategory string) models.Header {
+	var options []models.HeaderOption
+	for _, cat := range GetCategories() {
+		options = append(options, models.HeaderOption{
+			Category:     cat,
+			CategoryName: GetSubjectTypeName(cat),
+		})
+	}
+
+	return models.Header{
+		Options:     options,
+		Current:     currentCategory,
+		CurrentName: GetSubjectTypeName(currentCategory),
 	}
 }
 
-func GetActionZH(subjectType string) string {
-	switch subjectType {
-	case "book":
-		return "阅读"
-	case "movie", "tv", "anime":
-		return "观看"
-	case "game":
-		return "游玩"
-	default:
-		return "操作"
-	}
+func GetCategories() []string {
+	return append([]string{}, config.Categories...)
 }
 
-func GetUnitZH(subjectType string) string {
-	switch subjectType {
-	case "book":
-		return "本"
-	case "movie", "tv", "anime":
-		return "部"
-	case "game":
-		return "款"
-	default:
-		return ""
+func GetSubjectTypeName(subjectType string) string {
+	if info, ok := config.CategoryInfoMap[subjectType]; ok {
+		return info.Name
 	}
+	return "未知"
+}
+
+func GetSubjectActionName(subjectType string) (string, string) {
+	if info, ok := config.CategoryInfoMap[subjectType]; ok {
+		return info.ActionFull, info.ActionShort
+	}
+	return "", ""
+}
+
+func GetSubjectUnitName(subjectType string) string {
+	if info, ok := config.CategoryInfoMap[subjectType]; ok {
+		return info.Unit
+	}
+	return ""
 }
 
 func MD5Hash(text string) string {
