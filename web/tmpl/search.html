@@ -5,10 +5,8 @@
     {{ if ne .TotalCount 0 }}
     <ul class="subject-list">
         {{ range .Subjects }}
-        <li class="subject-list-item">
-            <div class="subject-list-cover search-cover">
-                <a href="{{ .SubjectURL }}"><img class="subject-list-image" src="{{ .ImageURL }}" alt="{{ .Title }}" loading="lazy"></a>
-            </div>
+        <li>
+            <a class="subject-list-cover search-cover" href="{{ .SubjectURL }}"><img class="subject-list-image" src="{{ .ImageURL }}" alt="{{ .Title }}" loading="lazy"></a>
             <div class="subject-list-info">
                 <h3 class="subject-list-title">
                     <span style="color:var(--sec-note-color)">[{{ .SubjectType }}]</span>

@@ -19,8 +19,10 @@
     <div class="page-toolbar">
         <div class="page-filter">
             {{ range .StatusList }}
+                {{ if ne .Count 0 }}
                 <li><a href="/{{ $.Category }}?status={{ .Value }}" class="{{ if eq $.Status .Value }}active{{ end }}">{{ .Label }}({{ .Count }})</a>
                 </li>
+                {{ end }}
             {{ end }}
         </div>
         <div class="page-func">
@@ -35,18 +37,16 @@
                 <input type="hidden" name="page"  value="{{ .CurrentPage }}">
                 <input type="hidden" name="status" value="{{ .Status }}">
             </form>
-            <a class="no-color" href="/add?subject_type={{ .Category }}" title="添加">添加{{ .PageTitle }}+</a>
+            <a href="/add?subject_type={{ .Category }}" title="添加">添加{{ .PageTitle }}+</a>
         </div>
     </div>
 
     <ul class="subject-list">
         {{ range .Subjects }}
-        <li class="subject-list-item">
-            <div class="subject-list-cover">
-                <a href="{{ .SubjectURL }}">
-                    <img class="subject-list-image" src="{{ .ImageURL }}" alt="{{ .Title }}" loading="lazy">
-                </a>
-            </div>
+        <li>
+            <a class="subject-list-cover" href="{{ .SubjectURL }}">
+                <img class="subject-list-image" src="{{ .ImageURL }}" alt="{{ .Title }}" loading="lazy">
+            </a>
             <div class="subject-list-info">
                 <h3 class="subject-list-title">
                     <a href="{{ .SubjectURL }}">{{ .Title }}</a>
