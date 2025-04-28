@@ -20,6 +20,7 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 		subjectType := query.Get("type")
 		queryLimit := query.Get("limit")
 		queryOffset := query.Get("offset")
+		querySort := query.Get("sort")
 
 		validTypes := map[string]bool{
 			"all":   true,
@@ -62,7 +63,21 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		responseJSON, err := dataops.ExportToJSONAPI(subjectType, limit, offset)
+		sort := 1
+		if querySort != "" {
+			var err error
+			sort, err = helpers.StringToInt(querySort)
+			if err != nil {
+				handleAPIError(w, http.StatusBadRequest, "invalid sort")
+				return
+			}
+			if sort < 1 || sort > 4 {
+				handleAPIError(w, http.StatusBadRequest, "invalid sort")
+				return
+			}
+		}
+
+		responseJSON, err := dataops.ExportToJSONAPI(subjectType, limit, offset, sort)
 		if err != nil {
 			handleAPIError(w, http.StatusInternalServerError, err.Error())
 			return
