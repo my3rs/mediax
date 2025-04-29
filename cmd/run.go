@@ -11,11 +11,13 @@ import (
 	"github.com/scenery/mediax/database"
 	"github.com/scenery/mediax/dataops"
 	"github.com/scenery/mediax/routes"
+	"github.com/scenery/mediax/version"
 )
 
 func Execute() {
 	configPath := flag.String("config", "config.json", "指定配置文件路径")
 	port := flag.Int("port", config.DefaultConfig.Server.Port, "指定启动端口")
+	versionFlag := flag.Bool("version", false, "显示 mediaX 版本信息")
 	importType := flag.String("import", "", "导入数据来源: bangumi 或 douban")
 	filePath := flag.String("file", "", "导入文件的相对路径")
 	downloadImage := flag.Bool("download-image", false, "可选，导入数据时是否下载图片")
@@ -34,6 +36,15 @@ func Execute() {
 	flag.Visit(func(f *flag.Flag) {
 		usedFlags[f.Name] = true
 	})
+
+	if *versionFlag {
+		if len(usedFlags) > 1 {
+			fmt.Println("Error: --version flag cannot be used with other parameters")
+			os.Exit(1)
+		}
+		fmt.Println("mediaX", version.Version)
+		os.Exit(0)
+	}
 
 	if usedFlags["config"] {
 		if len(usedFlags) > 1 {
@@ -97,7 +108,7 @@ func startServer(port int) {
 |_| |_| |_|\___|\__,_|_|\__,_/_/\_\
 
 `)
-	fmt.Printf("mediaX is up and running...\nPlease visit: http://%s\n", address)
+	fmt.Printf("mediaX %s is running at: http://%s\n", version.Version, address)
 	err := http.ListenAndServe(address, nil)
 	if err != nil {
 		log.Fatalf("mediaX failed to start: %v", err)
