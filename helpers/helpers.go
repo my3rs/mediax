@@ -49,7 +49,7 @@ func GetHeader(currentCategory string) models.Header {
 }
 
 func GetCategories() []string {
-	return append([]string{}, config.Categories...)
+	return append([]string{}, config.App.Categories...)
 }
 
 func GetSubjectTypeName(subjectType string) string {

@@ -53,13 +53,6 @@ type HomeView struct {
 }
 
 // Category Page
-type CategoryInfo struct {
-	Name        string
-	Unit        string
-	ActionFull  string
-	ActionShort string
-}
-
 type CategoryViewItem struct {
 	SubjectType  string
 	SubjectURL   string

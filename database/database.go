@@ -15,7 +15,7 @@ import (
 
 var db *gorm.DB
 
-func InitDB(migrate bool) {
+func InitDB() {
 	var err error
 	dbLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
@@ -30,7 +30,6 @@ func InitDB(migrate bool) {
 	dbPath := "mediax.db"
 
 	_, err = os.Stat(dbPath)
-	databaseExists := err == nil
 
 	db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{
 		TranslateError: true,
@@ -40,28 +39,23 @@ func InitDB(migrate bool) {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	if !databaseExists || migrate {
-		err = db.AutoMigrate(&models.Subject{})
-		if err != nil {
-			log.Fatalf("Failed to migrate database: %v", err)
-		}
-
-		// 删除过时的索引 v0.6.0
-		if db.Migrator().HasIndex(&models.Subject{}, "idx_title") {
-			db.Migrator().DropIndex(&models.Subject{}, "idx_title")
-		}
-		if db.Migrator().HasIndex(&models.Subject{}, "idx_id_type") {
-			db.Migrator().DropIndex(&models.Subject{}, "idx_id_type")
-		}
-		if db.Migrator().HasIndex(&models.Subject{}, "idx_type_status_id") {
-			db.Migrator().DropIndex(&models.Subject{}, "idx_type_status_id")
-		}
-
-		fmt.Println("Database migration successful.")
-		if migrate {
-			os.Exit(0)
-		}
+	err = db.AutoMigrate(&models.Subject{})
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
 	}
+
+	// 删除过时的索引 v0.6.0
+	if db.Migrator().HasIndex(&models.Subject{}, "idx_title") {
+		db.Migrator().DropIndex(&models.Subject{}, "idx_title")
+	}
+	if db.Migrator().HasIndex(&models.Subject{}, "idx_id_type") {
+		db.Migrator().DropIndex(&models.Subject{}, "idx_id_type")
+	}
+	if db.Migrator().HasIndex(&models.Subject{}, "idx_type_status_id") {
+		db.Migrator().DropIndex(&models.Subject{}, "idx_type_status_id")
+	}
+
+	fmt.Println("Database migration successful.")
 }
 
 func GetDB() *gorm.DB {

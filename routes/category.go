@@ -16,7 +16,7 @@ import (
 func handleCategory(w http.ResponseWriter, r *http.Request) {
 	category := strings.TrimPrefix(r.URL.Path, "/")
 
-	pageSize := config.PageSize
+	pageSize := config.App.Pagination.PageSize
 	page, err := helpers.StringToInt(r.URL.Query().Get("page"))
 	if err != nil || page < 1 {
 		page = 1

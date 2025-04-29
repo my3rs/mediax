@@ -35,7 +35,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pageSize := config.PageSize
+	pageSize := config.App.Pagination.PageSize
 	page, err := helpers.StringToInt(r.URL.Query().Get("page"))
 	if err != nil || page < 1 {
 		page = 1
