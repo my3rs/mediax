@@ -1,10 +1,13 @@
 package cache
 
 import (
+	"container/list"
 	"fmt"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/scenery/mediax/config"
 )
 
 // 首页缓存: home:{subject_type}
@@ -20,7 +23,9 @@ type CacheItem struct {
 }
 
 var (
-	cacheItem sync.Map
+	cacheItem         sync.Map
+	cacheSubjectOrder = list.New() // FIFO list for subject cache
+	cacheSubjectIndex sync.Map
 )
 
 // 获取缓存项
@@ -47,6 +52,18 @@ func SetCache(key string, value interface{}, duration ...time.Duration) {
 		expiration = time.Now().Add(10 * 365 * 24 * time.Hour) // 默认 10 年
 	}
 
+	if strings.HasPrefix(key, "subject:") {
+		if countSubjectCache() >= config.MaxCacheSubjects {
+			deleteOldestSubjectCache()
+		}
+
+		if elem, ok := cacheSubjectIndex.Load(key); ok {
+			cacheSubjectOrder.Remove(elem.(*list.Element))
+		}
+		elem := cacheSubjectOrder.PushBack(key)
+		cacheSubjectIndex.Store(key, elem)
+	}
+
 	item := CacheItem{
 		Value:      value,
 		Expiration: expiration,
@@ -58,6 +75,13 @@ func SetCache(key string, value interface{}, duration ...time.Duration) {
 // 删除缓存项
 func DeleteCache(key string) {
 	cacheItem.Delete(key)
+
+	if strings.HasPrefix(key, "subject:") {
+		if elem, ok := cacheSubjectIndex.Load(key); ok {
+			cacheSubjectOrder.Remove(elem.(*list.Element))
+			cacheSubjectIndex.Delete(key)
+		}
+	}
 	// fmt.Printf("已删除缓存: %s\n", key)
 }
 
@@ -83,4 +107,24 @@ func ClearPageCache(subjectType string) {
 		}
 		return true
 	})
+}
+
+// 删除最早的 subject 缓存
+func deleteOldestSubjectCache() {
+	for cacheSubjectOrder.Len() > 0 {
+		elem := cacheSubjectOrder.Front()
+		if elem == nil {
+			break
+		}
+		key := elem.Value.(string)
+		cacheSubjectOrder.Remove(elem)
+		cacheSubjectIndex.Delete(key)
+		cacheItem.Delete(key)
+		// fmt.Printf("已删除最早的缓存: %s\n", key)
+		break
+	}
+}
+
+func countSubjectCache() int {
+	return cacheSubjectOrder.Len()
 }
