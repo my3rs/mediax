@@ -37,7 +37,7 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		limit := config.RequestLimit
+		limit := config.QueryLimit
 		if queryLimit != "" {
 			var err error
 			limit, err = helpers.StringToInt(queryLimit)
@@ -45,8 +45,8 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 				handleAPIError(w, http.StatusBadRequest, "invalid limit")
 				return
 			}
-			if limit < 1 || limit > config.RequestLimit {
-				limit = config.RequestLimit
+			if limit < 1 || limit > config.QueryLimit {
+				limit = config.QueryLimit
 			}
 		}
 

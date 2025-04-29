@@ -25,3 +25,13 @@ type Subject struct {
 func (Subject) TableName() string {
 	return "subject"
 }
+
+type Version struct {
+	ID        uint   `gorm:"primaryKey"`
+	Version   string `gorm:"unique;column:version"`
+	UpdatedAt int64  `gorm:"column:updated_at"`
+}
+
+func (Version) TableName() string {
+	return "version"
+}

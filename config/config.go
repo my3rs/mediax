@@ -19,8 +19,8 @@ const (
 
 // API Config
 var (
-	CORS_HOST    = "*"
-	RequestLimit = 50
+	CORS_HOST  = "*"
+	QueryLimit = 50
 )
 
 var DefaultConfig = models.AppConfig{

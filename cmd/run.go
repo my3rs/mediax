@@ -105,7 +105,7 @@ func startServer(port int) {
  _ __ ___   ___  __| (_) __ _\ \/ /
 | '_   _ \ / _ \/ _  | |/ _  |\  / 
 | | | | | |  __/ (_| | | (_| |/  \ 
-|_| |_| |_|\___|\__,_|_|\__,_/_/\_\
+|_| |_| |_|\___|\__,_|_|\__,_/_/\_\  by ATP
 
 `)
 	fmt.Printf("mediaX %s is running at: http://%s\n", version.Version, address)
