@@ -6,6 +6,7 @@
 :root {
     --font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif, 'Color Emoji';
     --main-width: 720px;
+    --subject-card-width: 750px;
     --font-size: 16px;
     --border-radius-small: 8px;
     --border-radius-normal: 12px;
@@ -486,6 +487,17 @@ main {
     text-align: center;
 }
 
+.subject-card {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--subject-card-width);
+    background-color: var(--highlight-color);
+    border-radius: var(--border-radius-box);
+    box-shadow: var(--box-shadow-box);
+    overflow: hidden
+}
+
 .subject-card h2 {
     margin: 0;
     font-size: 22px;
@@ -513,14 +525,6 @@ main {
 
 .subject-card .note-color {
     color: #d1d1d3 !important;
-}
-
-.subject-card {
-    position: relative;
-    background-color: var(--highlight-color);
-    border-radius: var(--border-radius-box);
-    box-shadow: var(--box-shadow-box);
-    overflow: hidden
 }
 
 .subject-card-overlay {
@@ -614,16 +618,16 @@ a.subject-outlink {
     backdrop-filter: none;
 }
 
-.edit-cover {
+.edit-page .subject-cover {
     margin-top: 15px;
 }
 
-.edit-detail label {
+.edit-page .subject-detail label {
     font-size: 14px;
     min-width: 94px
 }
 
-.edit-detail p {
+.edit-page .subject-detail p {
     display: flex;
     align-items: center
 }
@@ -668,7 +672,7 @@ a.subject-outlink {
     padding: 10px;
     border: 1.5px solid var(--border-color);
     transition: all 0.25s var(--transition-effect);
-    cursor: pointer;
+    cursor: pointer
 }
 
 .add-dot {
@@ -690,7 +694,6 @@ a.subject-outlink {
     border-radius: 50%;
     opacity: 0;
     transform: scale(1.5);
-    transition: all 0.25s var(--transition-effect);
 }
 
 .add-item input[type=radio]:checked + label {
@@ -1004,9 +1007,22 @@ a.subject-outlink {
         padding: 0 10px
     }
 
+    .subject-card {
+        width: unset;
+    }
+
     .subject-cover {
         margin-right: 20px;
         width: 160px
+    }
+
+    .subject-intro,
+    .subject-manage {
+        padding: 0 10px;
+    }
+
+    .edit-page .subject-intro {
+        padding: 0;
     }
 }
 

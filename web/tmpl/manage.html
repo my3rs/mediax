@@ -1,11 +1,11 @@
 {{ define "main" }}
 <main>
   <h2>{{ .PageTitle }}</h2>
-  <form action="{{ .SubmitURL }}" method="POST" enctype="multipart/form-data">
-    <div class="subject edit-page">
+  <form class="edit-page" action="{{ .SubmitURL }}" method="POST" enctype="multipart/form-data">
+    <div class="subject">
       <div class="subject-info">
-        <img class="subject-cover edit-cover" src="{{ .ImageURL }}" alt="{{ .Subject.Title }}">
-        <div class="subject-detail edit-detail">
+        <img class="subject-cover" src="{{ .ImageURL }}" alt="{{ .Subject.Title }}">
+        <div class="subject-detail">
           <p><label for="title">标题:</label><input type="text" id="title" name="title" value="{{ .Subject.Title }}" required></p>
           <p><label for="alt_title">别名/副标题:</label><input type="text" id="alt_title" name="alt_title" value="{{ .Subject.AltTitle }}"></p>
           <p><label for="creator">{{ .CreatorLabel }}:</label><input type="text" id="creator" name="creator" value="{{ .Subject.Creator }}"></p>
