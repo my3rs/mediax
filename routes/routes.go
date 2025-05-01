@@ -5,46 +5,71 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/scenery/mediax/auth"
 	"github.com/scenery/mediax/config"
+	"github.com/scenery/mediax/handlers"
 	"github.com/scenery/mediax/web"
 )
 
+var protectedMux = http.NewServeMux()
+
 func setupRoutes() {
 	var err error
+
 	staticFS, err = web.GetStaticFileSystem()
 	if err != nil {
 		log.Fatal(err)
 	}
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))))
 
-	if _, err := os.Stat(config.ImageDir); os.IsNotExist(err) {
-		err := os.MkdirAll(config.ImageDir, os.ModePerm)
+	// Static dir
+	staticServer := http.FileServer(http.FS(staticFS))
+	staticHandler := http.StripPrefix("/static/", staticServer)
+
+	// Image dir
+	imageDir := config.ImageDir
+	if _, err := os.Stat(imageDir); os.IsNotExist(err) {
+		err := os.MkdirAll(imageDir, os.ModePerm)
 		if err != nil {
-			log.Fatalf("Failed to create image directory <%s>: %v", config.ImageDir, err)
+			log.Fatalf("Failed to create image directory <%s>: %v", imageDir, err)
 		}
-		log.Printf("Image directory <%s> did not exist, it has been created automatically", config.ImageDir)
+		log.Printf("Image directory <%s> did not exist, it has been created automatically", imageDir)
 	}
-	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir(config.ImageDir))))
+	imageFS := os.DirFS(imageDir)
+	imageServer := http.FileServer(http.FS(imageFS))
+	imageHandler := http.StripPrefix("/images/", imageServer)
 
-	http.HandleFunc("/", redirectToHome)
-	http.HandleFunc("/home", handleHomePage)
+	// Routes
+	http.HandleFunc("/login", handleLogin)
 
-	http.HandleFunc("/book", handleCategory)
-	http.HandleFunc("/movie", handleCategory)
-	http.HandleFunc("/tv", handleCategory)
-	http.HandleFunc("/anime", handleCategory)
-	http.HandleFunc("/game", handleCategory)
+	protectedMux.Handle("/static/",
+		handlers.NoDirListingHandler(staticHandler, staticFS, "/static/"),
+	)
+	protectedMux.Handle("/images/",
+		handlers.NoDirListingHandler(imageHandler, imageFS, "/images/"),
+	)
 
-	http.HandleFunc("/book/", handleSubject)
-	http.HandleFunc("/movie/", handleSubject)
-	http.HandleFunc("/tv/", handleSubject)
-	http.HandleFunc("/anime/", handleSubject)
-	http.HandleFunc("/game/", handleSubject)
+	protectedMux.HandleFunc("/logout", handleLogout)
 
-	http.HandleFunc("/add", handleAdd)
-	http.HandleFunc("/add/subject", handleAddSubject)
+	protectedMux.HandleFunc("/", redirectToHome)
+	protectedMux.HandleFunc("/home", handleHomePage)
+	protectedMux.HandleFunc("/book", handleCategory)
+	protectedMux.HandleFunc("/movie", handleCategory)
+	protectedMux.HandleFunc("/tv", handleCategory)
+	protectedMux.HandleFunc("/anime", handleCategory)
+	protectedMux.HandleFunc("/game", handleCategory)
 
-	http.HandleFunc("/search", handleSearch)
+	protectedMux.HandleFunc("/book/", handleSubject)
+	protectedMux.HandleFunc("/movie/", handleSubject)
+	protectedMux.HandleFunc("/tv/", handleSubject)
+	protectedMux.HandleFunc("/anime/", handleSubject)
+	protectedMux.HandleFunc("/game/", handleSubject)
 
-	http.HandleFunc("/api/v0/collection", handleAPI)
+	protectedMux.HandleFunc("/add", handleAdd)
+	protectedMux.HandleFunc("/add/subject", handleAddSubject)
+
+	protectedMux.HandleFunc("/search", handleSearch)
+
+	protectedMux.HandleFunc("/api/v0/collection", handleAPI)
+
+	http.Handle("/", auth.SecurityHeadersMiddleware(auth.AuthMiddleware(protectedMux)))
 }

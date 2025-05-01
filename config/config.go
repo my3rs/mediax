@@ -2,80 +2,41 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"net"
 	"os"
+	"strings"
+	"time"
 
-	"github.com/scenery/mediax/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
-const (
-	// Image
-	ImageDir = "images"
-
-	// Cache
-	MaxCacheSubjects = 1000
-)
-
-// API Config
-var (
-	CORS_HOST  = "*"
-	QueryLimit = 50
-)
-
-var DefaultConfig = models.AppConfig{
-	Server: models.ServerConfig{
-		Address: "0.0.0.0",
-		Port:    8080,
-	},
-	Pagination: models.PaginationConfig{
-		PageSize: 10,
-	},
-	Categories: defaultCategories,
+type ServerConfig struct {
+	Address string `json:"address"`
+	Port    int    `json:"port"`
 }
 
-var defaultCategories = []string{"book", "movie", "tv", "anime", "game"}
-
-var CategoryInfoMap = map[string]models.CategoryInfo{
-	"book": {
-		Name:        "图书",
-		Unit:        "本",
-		ActionFull:  "阅读",
-		ActionShort: "读",
-	},
-	"movie": {
-		Name:        "电影",
-		Unit:        "部",
-		ActionFull:  "观看",
-		ActionShort: "看",
-	},
-	"tv": {
-		Name:        "剧集",
-		Unit:        "部",
-		ActionFull:  "观看",
-		ActionShort: "看",
-	},
-	"anime": {
-		Name:        "番剧",
-		Unit:        "部",
-		ActionFull:  "观看",
-		ActionShort: "看",
-	},
-	"game": {
-		Name:        "游戏",
-		Unit:        "款",
-		ActionFull:  "游玩",
-		ActionShort: "玩",
-	},
-	"home": {
-		Name: "mediaX",
-	},
-	"search": {
-		Name: "搜索",
-	},
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
-var App models.AppConfig
+type PaginationConfig struct {
+	PageSize int `json:"page_size"`
+}
+
+type AppConfig struct {
+	Server            ServerConfig `json:"server"`
+	User              User         `json:"user"`
+	SessionTimeoutStr string       `json:"session_timeout"`
+	SessionTimeout    time.Duration
+	Pagination        PaginationConfig `json:"pagination"`
+	Categories        []string         `json:"categories"`
+}
+
+var App AppConfig
 
 func LoadConfig(path string) error {
 	data, err := os.ReadFile(path)
@@ -83,7 +44,7 @@ func LoadConfig(path string) error {
 		return fmt.Errorf("failed to read config file: %w", err)
 	}
 
-	var cfg models.AppConfig
+	var cfg AppConfig
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		return fmt.Errorf("invalid config format: %w", err)
 	}
@@ -97,13 +58,31 @@ func LoadConfig(path string) error {
 	if cfg.Server.Port == 0 {
 		cfg.Server.Port = DefaultConfig.Server.Port
 	} else if cfg.Server.Port < 1 || cfg.Server.Port > 65535 {
-		return fmt.Errorf("invalid port: %d (must be between 1 and 65535)", cfg.Server.Port)
+		return fmt.Errorf("invalid port: %d (must be between 1 and 65535).", cfg.Server.Port)
 	}
 
-	if cfg.Pagination.PageSize == 0 {
+	if cfg.User.Username == "" {
+		return errors.New("invalid user configuration: username must be set.")
+	}
+	if cfg.User.Password == "" {
+		return errors.New("invalid user configuration: password must be set (should be bcrypt hashed).")
+	}
+
+	parsedTimeout, err := time.ParseDuration(cfg.SessionTimeoutStr)
+	if err != nil {
+		log.Printf("Warning: Failed to parse session_timeout '%s': %v. Using default.", cfg.SessionTimeoutStr, err)
+		cfg.SessionTimeout = DefaultConfig.SessionTimeout
+	} else {
+		cfg.SessionTimeout = parsedTimeout
+		if cfg.SessionTimeout <= 0 {
+			log.Printf("Warning: Parsed session_timeout '%s' is 0 or negative. Using default.", cfg.SessionTimeoutStr)
+			cfg.SessionTimeout = DefaultConfig.SessionTimeout
+		}
+	}
+
+	if cfg.Pagination.PageSize < 10 || cfg.Pagination.PageSize > 50 {
+		log.Printf("Warning: Invalid pagination page_size: %d (must be between 10 and 50). Using default.", cfg.Pagination.PageSize)
 		cfg.Pagination.PageSize = DefaultConfig.Pagination.PageSize
-	} else if cfg.Pagination.PageSize < 1 || cfg.Pagination.PageSize > 50 {
-		return fmt.Errorf("invalid pagination page_size: %d (must be between 1 and 50)", cfg.Pagination.PageSize)
 	}
 
 	if len(cfg.Categories) == 0 {
@@ -111,13 +90,21 @@ func LoadConfig(path string) error {
 	} else {
 		for _, cat := range cfg.Categories {
 			if !isValidCategory(cat) {
-				return fmt.Errorf("invalid category: %s (allowed: %v)", cat, defaultCategories)
+				return fmt.Errorf("Error: Invalid category: %s (allowed: %v)", cat, defaultCategories)
 			}
 		}
 	}
 
 	App = cfg
 	return nil
+}
+
+func (u *User) CheckPassword(inputPassword string) bool {
+	if strings.HasPrefix(u.Password, "{bcrypt}") {
+		savedPassword := strings.TrimPrefix(u.Password, "{bcrypt}")
+		return bcrypt.CompareHashAndPassword([]byte(savedPassword), []byte(inputPassword)) == nil
+	}
+	return false
 }
 
 func isValidCategory(cat string) bool {

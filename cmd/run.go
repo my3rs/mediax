@@ -12,12 +12,13 @@ import (
 	"github.com/scenery/mediax/dataops"
 	"github.com/scenery/mediax/routes"
 	"github.com/scenery/mediax/version"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Execute() {
 	configPath := flag.String("config", "config.json", "指定配置文件路径")
-	port := flag.Int("port", config.DefaultConfig.Server.Port, "指定启动端口")
 	versionFlag := flag.Bool("version", false, "显示 mediaX 版本信息")
+	bcryptFlag := flag.String("bcrypt", "", "生成 bcrypt 加密后的密码")
 	importType := flag.String("import", "", "导入数据来源: bangumi 或 douban")
 	filePath := flag.String("file", "", "导入文件的相对路径")
 	downloadImage := flag.Bool("download-image", false, "可选，导入数据时是否下载图片")
@@ -31,6 +32,17 @@ func Execute() {
 	}
 
 	flag.Parse()
+
+	if flag.NFlag() == 0 {
+		fmt.Println("Warning: No arguments provided. Attempting to load default config file.")
+		err := config.LoadConfig("config.json")
+		if err != nil {
+			log.Printf("Error loading default config: %v\n", err)
+			os.Exit(1)
+		}
+		startServer(config.App.Server.Port)
+		return
+	}
 
 	usedFlags := map[string]bool{}
 	flag.Visit(func(f *flag.Flag) {
@@ -58,6 +70,34 @@ func Execute() {
 		}
 		startServer(config.App.Server.Port)
 		return
+	}
+
+	if usedFlags["bcrypt"] {
+		if len(usedFlags) > 1 {
+			fmt.Println("Error: --bcrypt flag cannot be used with other parameters")
+			flag.Usage()
+			os.Exit(1)
+		}
+		password := *bcryptFlag
+		if password == "" {
+			fmt.Println("Error: --bcrypt requires a password value")
+			flag.Usage()
+			os.Exit(1)
+		}
+
+		if len(password) < 4 || len(password) > 64 {
+			fmt.Println("Error: Password length must be between 4 and 64 characters.")
+			os.Exit(1)
+		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			fmt.Println("Error generating bcrypt hash:", err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("{bcrypt}%s\n", string(hashedPassword))
+		os.Exit(0)
 	}
 
 	config.App = config.DefaultConfig
@@ -92,7 +132,7 @@ func Execute() {
 		return
 	}
 
-	startServer(*port)
+	startServer(config.App.Server.Port)
 }
 
 func startServer(port int) {

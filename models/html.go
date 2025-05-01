@@ -10,6 +10,7 @@ type HeaderOption struct {
 
 type Header struct {
 	Options     []HeaderOption
+	User        string
 	Current     string
 	CurrentName string
 }

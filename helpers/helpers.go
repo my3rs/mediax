@@ -43,6 +43,7 @@ func GetHeader(currentCategory string) models.Header {
 
 	return models.Header{
 		Options:     options,
+		User:        config.App.User.Username,
 		Current:     currentCategory,
 		CurrentName: GetSubjectTypeName(currentCategory),
 	}

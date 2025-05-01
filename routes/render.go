@@ -13,6 +13,23 @@ import (
 	"github.com/scenery/mediax/models"
 )
 
+func renderLogin(w http.ResponseWriter, data interface{}) {
+	tmpl, err := template.ParseFS(tmplFS, "login.html")
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Internal Server Error: %v", err), http.StatusInternalServerError)
+		return
+	}
+}
+
 func renderPage(w http.ResponseWriter, contentTemplate string, data interface{}) {
 	pageTemplates, err := baseTemplates.Clone()
 	if err != nil {

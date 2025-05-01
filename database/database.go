@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -54,13 +53,13 @@ func migrateDB(db *gorm.DB) {
 		if err := db.AutoMigrate(&models.Version{}); err != nil {
 			log.Fatalf("Failed to migrate Version table: %v", err)
 		}
-		fmt.Println("Table Version created.")
+		log.Println("Table Version created.")
 	}
 
 	currentVersion := getCurrentVersion(db)
 
 	if isOldVersion(currentVersion, "0.6.0") {
-		fmt.Println("Migrating database from version", currentVersion, "to 0.6.0 ...")
+		log.Println("Migrating database from version", currentVersion, "to 0.6.0 ...")
 		err := db.AutoMigrate(&models.Subject{})
 		if err != nil {
 			log.Fatalf("Failed to migrate database: %v", err)
@@ -82,7 +81,7 @@ func migrateDB(db *gorm.DB) {
 			log.Fatalf("Failed to set current version: %v", err)
 		}
 
-		fmt.Println("Database migration successful.")
+		log.Println("Database migration successful.")
 	}
 }
 
