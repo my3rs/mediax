@@ -50,15 +50,11 @@ func APIAuthMiddleware(expectedHashedKey string) func(http.Handler) http.Handler
 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			var token string
 			authHeader := r.Header.Get("Authorization")
-			token := ""
 			if strings.HasPrefix(authHeader, BearerTokenPrefix) {
 				token = strings.TrimPrefix(authHeader, BearerTokenPrefix)
-			} else if customKey := r.Header.Get("X-API-Key"); customKey != "" {
-				token = customKey
-			}
-
-			if token == "" {
+			} else {
 				log.Printf("API auth failed: Token missing")
 				handlers.HandleAPIError(w, http.StatusUnauthorized, "Authentication Failed")
 				return
