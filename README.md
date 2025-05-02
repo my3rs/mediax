@@ -17,7 +17,7 @@ mediaX 是一款使用 Go 语言开发的个人阅读/观影/看剧/追番/游�
 
 ## 使用说明
 
-mediaX 从 v0.6.0 版本开始使用配置文件启动，默认加载程序目录下的 `config.json` 文件，你也可以通过 `--config` 参数手动指定。配置文件格式如下：
+mediaX 从 [v0.6.0](https://github.com/scenery/mediax/releases/tag/v0.6.0) 版本开始通过配置文件启动，默认加载程序目录下的 `config.json` 文件，也可通过 `--config` 参数指定。配置文件格式如下：
 ```json
 {
     "server": {
@@ -50,7 +50,7 @@ mediaX 从 v0.6.0 版本开始使用配置文件启动，默认加载程序目�
 - page_size: 分页条目数量，限制 10 至 50 长度
 - api_key: 默认为空，不启用 API 功能
 
-v0.6.0 版本开始必须设置用户，密码使用 BCrypt 加密，可使用 `--bcrypt` 参数加密你的密码，例如：
+配置文件中用户名和密码不能为空，且密码使用 BCrypt 加密，可使用 `--bcrypt` 参数加密，例如：
 ```bash
 # 设置密码: hubcap-oxidation-album-glitzy-tying
 # Linux / macOS
