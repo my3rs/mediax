@@ -17,6 +17,53 @@ mediaX 是一款使用 Go 语言开发的个人阅读/观影/看剧/追番/游�
 
 ## 使用说明
 
+mediaX 从 v0.6.0 版本开始使用配置文件启动，默认加载程序目录下的 `config.json` 文件，你也可以通过 `--config` 参数手动指定。配置文件格式如下：
+```json
+{
+    "server": {
+        "address": "0.0.0.0",
+        "port": 8080,
+        "use_https": false
+    },
+    "user": {
+        "username": "username",
+        "password": "{bcrypt}$password"
+    },
+    "session_timeout": "168h",
+    "categories": ["book", "movie", "tv", "anime", "game"],
+    "pagination": {
+        "page_size": 10
+    },
+    "api_key": ""
+}
+```
+
+其中：
+
+- address: 监听地址，默认 0.0.0.0
+- port: 监听端口，默认 8080
+- use_https: 启用安全连接，默认 false，建议在 HTTPS 环境下开启
+- username: 用户名，限制 1 至 64 个字符
+- password: 密码，限制 4 至 64 个字符
+- session_timeout: 登录过期时间，默认 168h（7天）
+- categories: 开启的分类模块，默认全部开启
+- page_size: 分页条目数量，限制 10 至 50 长度
+- api_key: 默认为空，不启用 API 功能
+
+v0.6.0 版本开始必须设置用户，密码使用 BCrypt 加密，可使用 `--bcrypt` 参数加密你的密码，例如：
+```bash
+# 设置密码: hubcap-oxidation-album-glitzy-tying
+# Linux / macOS
+./mediax --bcrypt "hubcap-oxidation-album-glitzy-tying"
+# Windows
+mediax.exe --bcrypt "hubcap-oxidation-album-glitzy-tying"
+
+# 输出:
+{bcrypt}$2a$10$kR.uXEAfE.ADUoGd5SaXqu75HjGwzSdmi2rbFHX/OT8DrkoltS7a6
+```
+
+将输出的值填入配置文件 `password` 字段中即可。
+
 mediaX 支持导入豆瓣（图书/电影/剧集）或 [Bangumi 番组计划](https://bgm.tv/)（图书/电影/剧集/番剧/游戏）数据来源的个人历史记录，其中 Bangumi 的电影和剧集记录因 API 返回内容限制未做详细区分，简单的判断如果只有一集归类为电影，大于一集则归类为剧集。
 
 - 导入豆瓣数据：首先使用「[豆伴](https://github.com/doufen-org/tofu)」导出数据，安装好插件后，进入设置连接账号，然后点击浏览器任务栏插件图标选择 `新建任务`，选择备份的项目中只勾选第一个 **影/音/书/游/剧**，等待任务完成后，点击右上方 `浏览备份` - `备份数据库`，解压下载的文件，其中的 `tofu[xxxxxx].json` 为需要的文件。
@@ -120,17 +167,36 @@ mediax.exe --export <all|anime|movie|book|tv|game> [--limit <number>]
 }
 ```
 
+你可以使用 `--api-key` 参数生成一个 API Key：
+```bash
+# Linux / macOS
+./mediax --api-key
+# Windows
+mediax.ext --api-key
+
+# 输出:
+------- Generated API Key -------
+API Key: 6ElNVkplRJgasQKfRyFNRDvxl0iV1kebIJpVl9Dt_Eg=
+Hashed API Key: QEr6mA6HkILFwBYckw4Ek+9v41ooV64VGebOSDwqiKM=
+---------------------------------
+```
+
+其中 Hashed API Key 需要复制到配置文件 `config.json` 的 `api_key` 字段中。请保管好 API Key，不要在非加密的公网中使用。如需重置，重新生成并替换即可。
+
 可选参数：
 
 - type: 获取数据的类型，默认为所有类型，可选 book, movie, tv, anime, game
 - limit: 获取数据的数量限制，默认（最大）为 50
 - offset: 获取数据的起始位置（跳过的记录数量），默认为 0
+- sort: 排序方式，默认为 1（最近添加），可选 2: 最近标记，3: 最早添加，4: 最早标记
 
 例如，使用 `curl` 命令获取数据：
 
 ```bash
 # 获取最近 5 条图书数据
-curl "http://localhost:8080/api/v0/collection?type=book&limit=5"
+curl "http://localhost:8080/api/v0/collection?type=book&limit=5" \
+  -H "Authorization: Bearer 6ElNVkplRJgasQKfRyFNRDvxl0iV1kebIJpVl9Dt_Eg="
 # 获取第 6 至 10 条图书数据
-curl "http://localhost:8080/api/v0/collection?type=book&limit=5&offset=5"
+curl "http://localhost:8080/api/v0/collection?type=book&limit=5&offset=5" \
+  -H "Authorization: Bearer 6ElNVkplRJgasQKfRyFNRDvxl0iV1kebIJpVl9Dt_Eg="
 ```
