@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"crypto/md5"
+	"crypto/rand"
 	"fmt"
 	"strconv"
 	"time"
@@ -30,6 +31,15 @@ func StringToInt(value string) (int, error) {
 func MD5Hash(text string) string {
 	hash := md5.Sum([]byte(text))
 	return fmt.Sprintf("%x", hash)
+}
+
+func GenerateRandomBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
 
 func GetHeader(currentCategory string) models.Header {

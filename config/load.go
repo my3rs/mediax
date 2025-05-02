@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"strings"
@@ -14,8 +13,9 @@ import (
 )
 
 type ServerConfig struct {
-	Address string `json:"address"`
-	Port    int    `json:"port"`
+	Address  string `json:"address"`
+	Port     int    `json:"port"`
+	UseHTTPS bool   `json:"use_https"`
 }
 
 type User struct {
@@ -34,6 +34,7 @@ type AppConfig struct {
 	SessionTimeout    time.Duration
 	Pagination        PaginationConfig `json:"pagination"`
 	Categories        []string         `json:"categories"`
+	ApiKey            string           `json:"api_key"`
 }
 
 var App AppConfig
@@ -70,18 +71,18 @@ func LoadConfig(path string) error {
 
 	parsedTimeout, err := time.ParseDuration(cfg.SessionTimeoutStr)
 	if err != nil {
-		log.Printf("Warning: Failed to parse session_timeout '%s': %v. Using default.", cfg.SessionTimeoutStr, err)
+		fmt.Printf("Warning: Invalid session_timeout: %s: %v. Using default.\n", cfg.SessionTimeoutStr, err)
 		cfg.SessionTimeout = DefaultConfig.SessionTimeout
 	} else {
 		cfg.SessionTimeout = parsedTimeout
 		if cfg.SessionTimeout <= 0 {
-			log.Printf("Warning: Parsed session_timeout '%s' is 0 or negative. Using default.", cfg.SessionTimeoutStr)
+			fmt.Printf("Warning: Invalid session_timeout: %s. Using default.\n", cfg.SessionTimeoutStr)
 			cfg.SessionTimeout = DefaultConfig.SessionTimeout
 		}
 	}
 
 	if cfg.Pagination.PageSize < 10 || cfg.Pagination.PageSize > 50 {
-		log.Printf("Warning: Invalid pagination page_size: %d (must be between 10 and 50). Using default.", cfg.Pagination.PageSize)
+		fmt.Printf("Warning: Invalid pagination page_size: %d (must be between 10 and 50). Using default.\n", cfg.Pagination.PageSize)
 		cfg.Pagination.PageSize = DefaultConfig.Pagination.PageSize
 	}
 

@@ -3,32 +3,31 @@ package config
 import "time"
 
 const (
-	// Image
-	ImageDir = "images"
-
-	// Cache
-	MaxCacheSubjects = 1000
+	ImageDir         = "images" // Image
+	MaxCacheSubjects = 1000     // Cache
 )
 
 // API Config
-var (
-	CORS_HOST  = "*"
-	QueryLimit = 50
-)
+var QueryLimit = 50
 
-var DefaultConfig = AppConfig{
-	Server: ServerConfig{
-		Address: "0.0.0.0",
-		Port:    8080,
-	},
-	SessionTimeout: 7 * 24 * time.Hour,
-	Pagination: PaginationConfig{
-		PageSize: 10,
-	},
-	Categories: defaultCategories,
-}
-
+var DefaultConfig AppConfig
 var defaultCategories = []string{"book", "movie", "tv", "anime", "game"}
+
+func init() {
+	DefaultConfig = AppConfig{
+		Server: ServerConfig{
+			Address:  "0.0.0.0",
+			Port:     8080,
+			UseHTTPS: false,
+		},
+		SessionTimeout: 7 * 24 * time.Hour,
+		Pagination: PaginationConfig{
+			PageSize: 10,
+		},
+		Categories: defaultCategories,
+		ApiKey:     "",
+	}
+}
 
 type CategoryInfo struct {
 	Name        string

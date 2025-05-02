@@ -42,7 +42,7 @@ func CreateSession(w http.ResponseWriter) error {
 		Path:     "/",
 		Expires:  time.Now().Add(config.App.SessionTimeout),
 		HttpOnly: true,
-		Secure:   true, // Requires HTTPS
+		Secure:   config.App.Server.UseHTTPS,
 		SameSite: http.SameSiteStrictMode,
 	}
 	http.SetCookie(w, cookie)
@@ -97,7 +97,7 @@ func clearClientCookie(w http.ResponseWriter) {
 		Path:     "/",
 		Expires:  time.Now().Add(-time.Hour),
 		HttpOnly: true,
-		Secure:   true, // Requires HTTPS
+		Secure:   config.App.Server.UseHTTPS,
 		SameSite: http.SameSiteStrictMode,
 	}
 	http.SetCookie(w, cookie)

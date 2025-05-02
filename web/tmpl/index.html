@@ -14,13 +14,13 @@
         </div>
         
         <div class="home-cover-box">
+            <div class="home-cover-overlay"></div>
             {{ range .Items }}
             <div class="home-item-cover" >
                 <img class="home-item-img" src="{{ .ImageURL }}" loading="lazy">
             </div>
             {{ end }}
         </div>
-        <div class="home-cover-overlay"></div>
         <div class="home-summary">
         {{ if eq .Summary.YearCount 0 }}
             <i>时光空白，新的故事在前方等待。</i>

@@ -1,6 +1,16 @@
 package auth
 
-import "net/http"
+import (
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/base64"
+	"fmt"
+	"log"
+	"net/http"
+	"strings"
+
+	"github.com/scenery/mediax/handlers"
+)
 
 func SecurityHeadersMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -19,4 +29,55 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			http.Redirect(w, r, "/login", http.StatusFound)
 		}
 	})
+}
+
+const BearerTokenPrefix = "Bearer "
+
+func APIAuthMiddleware(expectedHashedKey string) func(http.Handler) http.Handler {
+	expectedHashedKeyBytes, err := base64.StdEncoding.DecodeString(expectedHashedKey)
+	if err != nil {
+		log.Printf("Error: Configuration error: Invalid Base64 encoding for api_key '%s': %v. API endpoints will be denied.", expectedHashedKey, err)
+		expectedHashedKeyBytes = nil
+	}
+
+	if expectedHashedKey == "" || len(expectedHashedKeyBytes) == 0 {
+		fmt.Println("Warning: API Key is not configured. All API requests will be denied with a generic auth error.")
+		return func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				handlers.HandleAPIError(w, http.StatusUnauthorized, "Authentication Failed")
+				return
+			})
+		}
+	}
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHeader := r.Header.Get("Authorization")
+			token := ""
+			if strings.HasPrefix(authHeader, BearerTokenPrefix) {
+				token = strings.TrimPrefix(authHeader, BearerTokenPrefix)
+			} else if customKey := r.Header.Get("X-API-Key"); customKey != "" {
+				token = customKey
+			}
+
+			if token == "" {
+				log.Printf("API auth failed: Token missing")
+				handlers.HandleAPIError(w, http.StatusUnauthorized, "Authentication Failed")
+				return
+			}
+
+			hasher := sha256.New()
+			hasher.Write([]byte(token))
+			incomingHashBytes := hasher.Sum(nil)
+
+			if len(incomingHashBytes) != len(expectedHashedKeyBytes) ||
+				subtle.ConstantTimeCompare(incomingHashBytes, expectedHashedKeyBytes) == 0 {
+				log.Printf("API auth failed: Invalid token hash mismatch")
+				handlers.HandleAPIError(w, http.StatusForbidden, "Authentication Failed")
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
 }

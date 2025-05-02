@@ -12,6 +12,7 @@ import (
 )
 
 var protectedMux = http.NewServeMux()
+var apiMux = http.NewServeMux()
 
 func setupRoutes() {
 	var err error
@@ -69,7 +70,8 @@ func setupRoutes() {
 
 	protectedMux.HandleFunc("/search", handleSearch)
 
-	protectedMux.HandleFunc("/api/v0/collection", handleAPI)
+	apiMux.HandleFunc("/api/v0/collection", handlers.HandleAPI)
 
 	http.Handle("/", auth.SecurityHeadersMiddleware(auth.AuthMiddleware(protectedMux)))
+	http.Handle("/api/", auth.APIAuthMiddleware(config.App.ApiKey)(apiMux))
 }

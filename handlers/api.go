@@ -1,18 +1,18 @@
-package routes
+package handlers
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/scenery/mediax/config"
 	"github.com/scenery/mediax/dataops"
 	"github.com/scenery/mediax/helpers"
 )
 
-func handleAPI(w http.ResponseWriter, r *http.Request) {
+func HandleAPI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Origin", config.CORS_HOST)
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 
 	switch r.Method {
 	case http.MethodGet:
@@ -33,7 +33,7 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 		if subjectType == "" {
 			subjectType = "all"
 		} else if !validTypes[subjectType] {
-			handleAPIError(w, http.StatusBadRequest, "invalid subject type")
+			HandleAPIError(w, http.StatusBadRequest, "invalid subject type")
 			return
 		}
 
@@ -42,7 +42,7 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 			var err error
 			limit, err = helpers.StringToInt(queryLimit)
 			if err != nil {
-				handleAPIError(w, http.StatusBadRequest, "invalid limit")
+				HandleAPIError(w, http.StatusBadRequest, "invalid limit")
 				return
 			}
 			if limit < 1 || limit > config.QueryLimit {
@@ -55,7 +55,7 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 			var err error
 			offset, err = helpers.StringToInt(queryOffset)
 			if err != nil {
-				handleAPIError(w, http.StatusBadRequest, "invalid offset")
+				HandleAPIError(w, http.StatusBadRequest, "invalid offset")
 				return
 			}
 			if offset < 1 {
@@ -68,31 +68,48 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 			var err error
 			sort, err = helpers.StringToInt(querySort)
 			if err != nil {
-				handleAPIError(w, http.StatusBadRequest, "invalid sort")
+				HandleAPIError(w, http.StatusBadRequest, "invalid sort")
 				return
 			}
 			if sort < 1 || sort > 4 {
-				handleAPIError(w, http.StatusBadRequest, "invalid sort")
+				HandleAPIError(w, http.StatusBadRequest, "invalid sort")
 				return
 			}
 		}
 
 		responseJSON, err := dataops.ExportToJSONAPI(subjectType, limit, offset, sort)
 		if err != nil {
-			handleAPIError(w, http.StatusInternalServerError, err.Error())
+			HandleAPIError(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 		w.Write(responseJSON)
 		return
 	default:
-		handleAPIError(w, http.StatusMethodNotAllowed, "method not allowed")
+		HandleAPIError(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 }
 
-func handleAPIError(w http.ResponseWriter, errStatus int, errMessage string) {
+type apiError struct {
+	Error     string `json:"error"`
+	Timestamp string `json:"timestamp"`
+}
+
+func HandleAPIError(w http.ResponseWriter, errStatus int, errMessage string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(errStatus)
-	response := fmt.Sprintf(`{"error": "%s"}`, errMessage)
-	w.Write([]byte(response))
+
+	currentTimeUTC := time.Now().UTC()
+	timestampStr := currentTimeUTC.Format(time.RFC3339)
+
+	response := apiError{
+		Error:     errMessage,
+		Timestamp: timestampStr,
+	}
+	jsonResponse, marshalErr := json.Marshal(response)
+	if marshalErr != nil {
+		http.Error(w, "Internal Server Error marshalling error response", http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonResponse)
 }

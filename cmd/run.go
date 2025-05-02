@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"log"
@@ -10,6 +12,7 @@ import (
 	"github.com/scenery/mediax/config"
 	"github.com/scenery/mediax/database"
 	"github.com/scenery/mediax/dataops"
+	"github.com/scenery/mediax/helpers"
 	"github.com/scenery/mediax/routes"
 	"github.com/scenery/mediax/version"
 	"golang.org/x/crypto/bcrypt"
@@ -19,6 +22,7 @@ func Execute() {
 	configPath := flag.String("config", "config.json", "指定配置文件路径")
 	versionFlag := flag.Bool("version", false, "显示 mediaX 版本信息")
 	bcryptFlag := flag.String("bcrypt", "", "生成 bcrypt 加密后的密码")
+	apiKey := flag.Bool("api-key", false, "生成一个新的 API Key 及其哈希值")
 	importType := flag.String("import", "", "导入数据来源: bangumi 或 douban")
 	filePath := flag.String("file", "", "导入文件的相对路径")
 	downloadImage := flag.Bool("download-image", false, "可选，导入数据时是否下载图片")
@@ -34,7 +38,7 @@ func Execute() {
 	flag.Parse()
 
 	if flag.NFlag() == 0 {
-		fmt.Println("Warning: No arguments provided. Attempting to load default config file.")
+		fmt.Println("Warning: No arguments provided. Loading default config file.")
 		err := config.LoadConfig("config.json")
 		if err != nil {
 			log.Printf("Error loading default config: %v\n", err)
@@ -51,7 +55,7 @@ func Execute() {
 
 	if *versionFlag {
 		if len(usedFlags) > 1 {
-			fmt.Println("Error: --version flag cannot be used with other parameters")
+			fmt.Println("Error: --version flag must be used alone.")
 			os.Exit(1)
 		}
 		fmt.Println("mediaX", version.Version)
@@ -60,7 +64,7 @@ func Execute() {
 
 	if usedFlags["config"] {
 		if len(usedFlags) > 1 {
-			fmt.Println("Error: Error: --config flag cannot be used with other parameters")
+			fmt.Println("Error: --config flag must be used alone.")
 			os.Exit(1)
 		}
 		err := config.LoadConfig(*configPath)
@@ -74,13 +78,13 @@ func Execute() {
 
 	if usedFlags["bcrypt"] {
 		if len(usedFlags) > 1 {
-			fmt.Println("Error: --bcrypt flag cannot be used with other parameters")
+			fmt.Println("Error: --bcrypt flag must be used alone.")
 			flag.Usage()
 			os.Exit(1)
 		}
 		password := *bcryptFlag
 		if password == "" {
-			fmt.Println("Error: --bcrypt requires a password value")
+			fmt.Println("Error: --bcrypt requires a password value.")
 			flag.Usage()
 			os.Exit(1)
 		}
@@ -100,7 +104,33 @@ func Execute() {
 		os.Exit(0)
 	}
 
-	config.App = config.DefaultConfig
+	if *apiKey {
+		if len(usedFlags) > 1 {
+			fmt.Println("Error: --api-key flag must be used alone.")
+			os.Exit(1)
+		}
+
+		keyLength := 32
+		randomBytes, err := helpers.GenerateRandomBytes(keyLength)
+		if err != nil {
+			log.Fatalf("Failed to generate random bytes for API key: %v", err)
+		}
+		apiKeyBase64 := base64.URLEncoding.EncodeToString(randomBytes)
+
+		var apiKeyHash string
+		hasher := sha256.New()
+		hasher.Write([]byte(apiKeyBase64))
+		apiKeyHash = base64.StdEncoding.EncodeToString(hasher.Sum(nil))
+
+		fmt.Println("------- Generated API Key -------")
+		fmt.Printf("API Key: %s\n", apiKeyBase64)
+		fmt.Printf("Hashed API Key: %s\n", apiKeyHash)
+		fmt.Println("---------------------------------")
+		fmt.Println("Instructions: Copy the 'Hashed API Key' value to your config.json file.")
+		fmt.Println("You will use the 'API Key' value when making API requests.")
+
+		os.Exit(0)
+	}
 
 	if *importType != "" {
 		if *filePath == "" {
@@ -131,8 +161,6 @@ func Execute() {
 		}
 		return
 	}
-
-	startServer(config.App.Server.Port)
 }
 
 func startServer(port int) {
