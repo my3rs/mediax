@@ -81,7 +81,8 @@ func APIAuthMiddleware(expectedHashedKey string) func(http.Handler) http.Handler
 func CacheControlMiddleware(next http.Handler) http.Handler {
 	cacheControlValue := fmt.Sprintf("public, max-age=%d", config.CacheControl)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if (r.Method == http.MethodGet || r.Method == http.MethodHead) && strings.HasPrefix(r.URL.Path, "/static/") {
+		if (r.Method == http.MethodGet || r.Method == http.MethodHead) &&
+			(strings.HasPrefix(r.URL.Path, "/static/") || strings.HasPrefix(r.URL.Path, "/images/")) {
 			w.Header().Set("Cache-Control", cacheControlValue)
 		}
 		next.ServeHTTP(w, r)
