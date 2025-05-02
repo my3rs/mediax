@@ -7,23 +7,26 @@ import (
 	"strings"
 )
 
-func NoDirListingHandler(fileServerHandler http.Handler, fileSystem fs.FS, stripPrefix string) http.Handler {
+func ServeStaticFiles(prefix string, fs fs.FS) http.Handler {
+	fileServer := http.FileServer(http.FS(fs))
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		trimmedPath := strings.TrimPrefix(r.URL.Path, stripPrefix)
-		trimmedPath = path.Clean("/" + trimmedPath)
-		trimmedPath = strings.TrimPrefix(trimmedPath, "/")
+		strippedPath := strings.TrimPrefix(r.URL.Path, prefix)
 
-		if !fs.ValidPath(trimmedPath) {
+		cleanedPath := path.Clean("/" + strippedPath)
+		fsPath := strings.TrimPrefix(cleanedPath, "/")
+
+		if strings.Contains(fsPath, "..") {
 			http.Error(w, "403 Forbidden", http.StatusForbidden)
 			return
 		}
 
-		if trimmedPath == "" || strings.Contains(trimmedPath, "..") {
-			http.Error(w, "403 Forbidden", http.StatusForbidden)
-			return
+		checkPath := fsPath
+		if checkPath == "" {
+			checkPath = "."
 		}
 
-		f, err := fileSystem.Open(trimmedPath)
+		f, err := fs.Open(checkPath)
 		if err == nil {
 			defer f.Close()
 			stat, err := f.Stat()
@@ -33,6 +36,12 @@ func NoDirListingHandler(fileServerHandler http.Handler, fileSystem fs.FS, strip
 			}
 		}
 
-		fileServerHandler.ServeHTTP(w, r)
+		originalPath := r.URL.Path
+		defer func() {
+			r.URL.Path = originalPath
+		}()
+		r.URL.Path = cleanedPath
+
+		fileServer.ServeHTTP(w, r)
 	})
 }

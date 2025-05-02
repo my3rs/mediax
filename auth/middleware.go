@@ -4,10 +4,12 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/base64"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
 
+	"github.com/scenery/mediax/config"
 	"github.com/scenery/mediax/handlers"
 )
 
@@ -74,4 +76,14 @@ func APIAuthMiddleware(expectedHashedKey string) func(http.Handler) http.Handler
 			next.ServeHTTP(w, r)
 		})
 	}
+}
+
+func CacheControlMiddleware(next http.Handler) http.Handler {
+	cacheControlValue := fmt.Sprintf("public, max-age=%d", config.CacheControl)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if (r.Method == http.MethodGet || r.Method == http.MethodHead) && strings.HasPrefix(r.URL.Path, "/static/") {
+			w.Header().Set("Cache-Control", cacheControlValue)
+		}
+		next.ServeHTTP(w, r)
+	})
 }

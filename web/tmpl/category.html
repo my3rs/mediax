@@ -74,12 +74,12 @@
     <div class="page-nav">
         <div class="pagination">
             {{ if gt .CurrentPage 1 }}
-            <a class="pagination-number padding-0" href="?page=1{{ .PageParams }}">首页</a>
+            <a class="pagination-text" href="?page=1{{ .PageParams }}">首页</a>
             <a class="pagination-number" href="?page={{ sub .CurrentPage 1 }}{{ .PageParams }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="currentColor"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
             </a>
             {{ else }}
-            <span class="pagination-disable padding-0">首页</span>
+            <span class="pagination-disable pagination-text">首页</span>
             <span class="pagination-disable">
                 <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="var(--note-color)"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
             </span>
@@ -97,12 +97,12 @@
             <a class="pagination-number icon-mirror" href="?page={{ add .CurrentPage 1 }}{{ .PageParams }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="currentColor"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
             </a>
-            <a class="pagination-number padding-0" href="?page={{ .TotalPages }}{{ .PageParams }}">尾页</a>
+            <a class="pagination-text" href="?page={{ .TotalPages }}{{ .PageParams }}">尾页</a>
             {{ else }}
             <span class="pagination-disable icon-mirror">
                 <svg xmlns="http://www.w3.org/2000/svg" width="8" viewBox="0 0 8 12" fill="var(--note-color)"><path d="M7.41 1.41L6 0 0 6l6 6 1.41-1.41L2.83 6z" fill-rule="evenodd"/></svg>
             </span>
-            <span class="pagination-disable padding-0">尾页</span>
+            <span class="pagination-disable pagination-text">尾页</span>
             {{ end }}
         </div>
         <form method="get" class="pagination-jump" style="display: inline;">

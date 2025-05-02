@@ -25,11 +25,12 @@ func Init() {
 
 func createFuncMap() template.FuncMap {
 	return template.FuncMap{
-		"add":     func(a, b int) int { return a + b },
-		"sub":     func(a, b int) int { return a - b },
-		"mul":     func(a, b int) int { return a * b },
-		"div":     func(a, b int) int { return a / b },
-		"version": func() string { return fmt.Sprintf("%s-%s", version.Version, version.CommitSHA) },
+		"add":         func(a, b int) int { return a + b },
+		"sub":         func(a, b int) int { return a - b },
+		"mul":         func(a, b int) int { return a * b },
+		"div":         func(a, b int) int { return a / b },
+		"version":     func() string { return version.Version },
+		"fullversion": func() string { return fmt.Sprintf("%s-%s", version.Version, version.CommitSHA) },
 	}
 }
 

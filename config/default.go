@@ -4,6 +4,7 @@ import "time"
 
 const (
 	ImageDir         = "images" // Image
+	CacheControl     = 31536000 // Static files cache max-age, 1 year
 	MaxCacheSubjects = 1000     // Cache
 )
 

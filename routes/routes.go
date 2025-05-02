@@ -22,10 +22,6 @@ func setupRoutes() {
 		log.Fatal(err)
 	}
 
-	// Static dir
-	staticServer := http.FileServer(http.FS(staticFS))
-	staticHandler := http.StripPrefix("/static/", staticServer)
-
 	// Image dir
 	imageDir := config.ImageDir
 	if _, err := os.Stat(imageDir); os.IsNotExist(err) {
@@ -36,18 +32,22 @@ func setupRoutes() {
 		log.Printf("Image directory <%s> did not exist, it has been created automatically", imageDir)
 	}
 	imageFS := os.DirFS(imageDir)
-	imageServer := http.FileServer(http.FS(imageFS))
-	imageHandler := http.StripPrefix("/images/", imageServer)
+
+	// Static files
+	staticFileHandler := handlers.ServeStaticFiles("/static/", staticFS)
+	imageFileHandler := handlers.ServeStaticFiles("/images/", imageFS)
+
+	cachedStaticHandler := auth.CacheControlMiddleware(staticFileHandler)
+	cachedImageHandler := auth.CacheControlMiddleware(imageFileHandler)
+
+	securedCachedStaticHandler := auth.SecurityHeadersMiddleware(cachedStaticHandler)
+	securedCachedImageHandler := auth.SecurityHeadersMiddleware(cachedImageHandler)
 
 	// Routes
-	http.HandleFunc("/login", handleLogin)
+	protectedMux.Handle("/static/", securedCachedStaticHandler)
+	protectedMux.Handle("/images/", securedCachedImageHandler)
 
-	protectedMux.Handle("/static/",
-		handlers.NoDirListingHandler(staticHandler, staticFS, "/static/"),
-	)
-	protectedMux.Handle("/images/",
-		handlers.NoDirListingHandler(imageHandler, imageFS, "/images/"),
-	)
+	http.HandleFunc("/login", handleLogin)
 
 	protectedMux.HandleFunc("/logout", handleLogout)
 
