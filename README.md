@@ -27,7 +27,7 @@ mediaX 从 v0.6.0 版本开始使用配置文件启动，默认加载程序目�
     },
     "user": {
         "username": "username",
-        "password": "{bcrypt}$password"
+        "password": "{bcrypt}$2a$password"
     },
     "session_timeout": "168h",
     "categories": ["book", "movie", "tv", "anime", "game"],

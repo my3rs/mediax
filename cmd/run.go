@@ -38,7 +38,7 @@ func Execute() {
 	flag.Parse()
 
 	if flag.NFlag() == 0 {
-		fmt.Println("Warning: No arguments provided. Loading default config file.")
+		fmt.Println("Info: No arguments provided. Loading default config file.")
 		err := config.LoadConfig("config.json")
 		if err != nil {
 			log.Printf("Error loading default config: %v\n", err)

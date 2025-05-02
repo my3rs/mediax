@@ -64,7 +64,13 @@ func LoadConfig(path string) error {
 
 	if cfg.User.Username == "" {
 		return errors.New("invalid user configuration: username must be set.")
+	} else {
+		usernameLength := len(cfg.User.Username)
+		if usernameLength < 1 || usernameLength > 64 {
+			return errors.New("invalid user configuration: username length must be between 1 and 64 characters.")
+		}
 	}
+
 	if cfg.User.Password == "" {
 		return errors.New("invalid user configuration: password must be set (should be bcrypt hashed).")
 	}

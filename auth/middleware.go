@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/base64"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -36,15 +35,14 @@ const BearerTokenPrefix = "Bearer "
 func APIAuthMiddleware(expectedHashedKey string) func(http.Handler) http.Handler {
 	expectedHashedKeyBytes, err := base64.StdEncoding.DecodeString(expectedHashedKey)
 	if err != nil {
-		log.Printf("Error: Configuration error: Invalid Base64 encoding for api_key '%s': %v. API endpoints will be denied.", expectedHashedKey, err)
-		expectedHashedKeyBytes = nil
+		log.Fatalf("Error: Invalid Base64 encoding for api_key '%s': %v", expectedHashedKey, err)
 	}
 
 	if expectedHashedKey == "" || len(expectedHashedKeyBytes) == 0 {
-		fmt.Println("Warning: API Key is not configured. All API requests will be denied with a generic auth error.")
+		log.Println("Info: API Key is not configured. All API requests will be denied with 403.")
 		return func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				handlers.HandleAPIError(w, http.StatusUnauthorized, "Authentication Failed")
+				handlers.HandleAPIError(w, http.StatusForbidden, "API Unavailable")
 				return
 			})
 		}
