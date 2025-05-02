@@ -271,7 +271,7 @@ footer {
     background-color: var(--color-scheme);
     box-shadow: var(--box-shadow-large)
 }
-    
+
 main {
     margin: 0 auto;
     min-height: 300px
@@ -669,7 +669,7 @@ a.subject-outlink {
     border-radius: var(--border-radius-normal);
     padding: 10px;
     border: 1.5px solid var(--border-color);
-    transition: all 0.25s var(--transition-effect);
+    transition: all .25s var(--transition-effect);
     cursor: pointer
 }
 
@@ -681,7 +681,7 @@ a.subject-outlink {
     position: relative;
 }
 
-.add-dot::before{
+.add-dot::before {
     position: absolute;
     content: "";
     top: 3px;
@@ -694,19 +694,19 @@ a.subject-outlink {
     transform: scale(1.5);
 }
 
-.add-item input[type=radio]:checked + label {
+.add-item input[type=radio]:checked+label {
     border-color: var(--link-hover-color);
     background-color: var(--link-hover-color);
     color: #fff;
     box-shadow: var(--box-shadow-box);
 }
 
-.add-item input[type=radio]:checked + label .add-dot {
+.add-item input[type=radio]:checked+label .add-dot {
     color: #fff;
     background-color: #fff;
 }
 
-.add-item input[type=radio]:checked + label .add-dot::before {
+.add-item input[type=radio]:checked+label .add-dot::before {
     opacity: 1;
     transform: scale(1);
 }
@@ -777,7 +777,7 @@ a.subject-outlink {
     transition: .4s var(--transition-effect);
 }
 
-#search-toggle:checked + label + .search-box-container {
+#search-toggle:checked+label+.search-box-container {
     width: 100%;
     opacity: 1;
     z-index: 2;
@@ -791,7 +791,7 @@ a.subject-outlink {
     cursor: pointer;
     z-index: 3;
 }
-  
+
 .search-icon-toggle .circle {
     position: absolute;
     width: 12px;
@@ -804,7 +804,7 @@ a.subject-outlink {
     transform: translate(-50%, -50%);
     box-sizing: border-box;
 }
-  
+
 .search-icon-toggle .handle {
     position: absolute;
     width: 8px;
@@ -818,7 +818,7 @@ a.subject-outlink {
     box-sizing: border-box;
 }
 
-#search-toggle:checked + label .circle {
+#search-toggle:checked+label .circle {
     width: 15px;
     height: 2px;
     border: none;
@@ -828,17 +828,17 @@ a.subject-outlink {
     background: var(--font-color);
     -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
-    transition: all 0.25s ease;
+    transition: all .25s ease;
 }
-  
-#search-toggle:checked + label .handle {
+
+#search-toggle:checked+label .handle {
     width: 15px;
     height: 2px;
     top: 17.5px;
     left: 5px;
     -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
-    transition: all 0.25s ease;
+    transition: all .25s ease;
 }
 
 .search-box {
@@ -1009,13 +1009,14 @@ a.subject-outlink {
 }
 
 @media (max-width:760px) {
+
     main,
     footer {
         padding: 0 10px
     }
 
     .subject-card {
-        width: unset;
+        width: unset
     }
 
     .subject-cover {
@@ -1025,11 +1026,11 @@ a.subject-outlink {
 
     .subject-intro,
     .subject-manage {
-        padding: 0 10px;
+        padding: 0 10px
     }
 
     .edit-page .subject-intro {
-        padding: 0;
+        padding: 0
     }
 }
 
@@ -1040,7 +1041,7 @@ a.subject-outlink {
 
     .subject-info {
         flex-direction: column;
-        padding: 30px;
+        padding: 30px
     }
 
     .subject-cover {
@@ -1048,17 +1049,17 @@ a.subject-outlink {
     }
 
     .add-list {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr))
     }
 
     .subject-list-title {
-        @supports (-webkit-line-clamp: 2) {
+        @supports (-webkit-line-clamp:2) {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: initial;
             display: -webkit-box;
             -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            -webkit-box-orient: vertical
         }
     }
 }
@@ -1067,6 +1068,7 @@ a.subject-outlink {
     from {
         opacity: 0
     }
+
     to {
         opacity: 1
     }
