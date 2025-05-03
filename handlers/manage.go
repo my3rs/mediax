@@ -68,13 +68,20 @@ func ManageSubject(w http.ResponseWriter, r *http.Request, uuidStr string) (stri
 	externalURL := data["external_url"]
 
 	hasImage := getHasImage(manageType, subjectType, uuidStr, externalURL)
-	file, _, err := r.FormFile("image")
+	file, header, err := r.FormFile("image")
 	if err == nil {
 		defer file.Close()
+		if header.Size > config.MaxUploadSize {
+			err = fmt.Errorf("uploaded image size %dM exceeds limit %dM", header.Size/1024/1024, config.MaxUploadSize/1024/1024)
+			log.Printf("Upload failed for %s/%s: %v", subjectType, uuidStr, err)
+			return "", err
+		}
+
 		hasImage = 1
-		imagePath := filepath.Join(config.ImageDir, subjectType, uuidStr+".jpg")
-		err = dataops.SaveUploadedFile(file, imagePath)
+
+		err = dataops.SaveUploadedImage(file, subjectType, uuidStr)
 		if err != nil {
+			log.Printf("Failed to process uploaded image for %s/%s: %v", subjectType, uuidStr, err)
 			return "", err
 		}
 	}
@@ -148,7 +155,7 @@ func updateSubject(uuidStr string, data map[string]string, hasImage int) error {
 	}
 
 	if subjectTypeOld != subjectTypeNew {
-		dataops.MoveDownloadedImage(subjectTypeOld, subjectTypeNew, uuidStr)
+		dataops.MoveImage(subjectTypeOld, subjectTypeNew, uuidStr)
 		cache.ClearPageCache(subjectTypeNew)
 		cache.ClearCommonCache(subjectTypeOld)
 		cache.ClearCommonCache(subjectTypeNew)
@@ -210,8 +217,7 @@ func ManageDelSubject(uuidStr, subjectType string) error {
 		return err
 	}
 
-	imageFilePath := filepath.Join(config.ImageDir, subjectType, uuidStr+".jpg")
-	err = dataops.DeleteImage(imageFilePath)
+	err = dataops.DeleteImage(subjectType, uuidStr)
 	if err != nil {
 		return err
 	}

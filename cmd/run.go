@@ -28,6 +28,7 @@ func Execute() {
 	downloadImage := flag.Bool("download-image", false, "可选，导入数据时是否下载图片")
 	exportType := flag.String("export", "", "导出数据: all, book, movie, tv, anime, game")
 	limit := flag.Int("limit", -1, "可选，指定导出的数量，默认导出所有数据")
+	generateThumbnails := flag.Bool("generate-thumbnail", false, "生成所有条目封面的缩略图")
 
 	flag.Usage = func() {
 		fmt.Println("Document: https://github.com/scenery/mediax/README.md")
@@ -129,6 +130,17 @@ func Execute() {
 		fmt.Println("Instructions: Copy the 'Hashed API Key' value to your config.json file.")
 		fmt.Println("You will use the 'API Key' value when making API requests.")
 
+		os.Exit(0)
+	}
+
+	if *generateThumbnails {
+		if len(usedFlags) > 1 {
+			fmt.Println("Error: --generate-thumbnail flag must be used alone.")
+			os.Exit(1)
+		}
+
+		database.InitDB()
+		dataops.GenerateThumbnailFlag()
 		os.Exit(0)
 	}
 

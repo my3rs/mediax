@@ -4,8 +4,12 @@ import "time"
 
 const (
 	ImageDir         = "images" // Image
-	CacheControl     = 31536000 // Static files cache max-age, 1 year
-	MaxCacheSubjects = 1000     // Cache
+	ThumbnailDir     = "images/thumbnails"
+	ThumbnailHeight  = 250
+	ThumbnailQuality = 70
+	MaxUploadSize    = 8 * 1024 * 1024 // Image size 8M
+	CacheControl     = 31536000        // Static files max-age, 1 year
+	MaxCacheSubjects = 1000            // Cache
 )
 
 // API Config

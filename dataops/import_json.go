@@ -109,12 +109,16 @@ func importDoubanJSON(filePath string, downloadImage bool) error {
 				if existingImages[relativeImagePath] {
 					fmt.Printf("Image already exists at %s, skipping download...\n", imageFilePath)
 				} else {
-					if err := SaveImage(imageURL, imageFilePath, true); err != nil {
+					if err := SaveRemoteImage(imageURL, imageFilePath, true); err != nil {
 						fmt.Printf("Failed to download image: %v\n", err)
 					} else {
 						db.Model(&models.Subject{}).Where("external_url = ?", externalURL).Update("has_image", 1)
 						fmt.Printf("Subject with external URL <%s> image updated: %s\n", externalURL, imageFilePath)
 					}
+				}
+				err = GenerateThumbnail(subjectType, existingSubject.UUID)
+				if err != nil {
+					fmt.Printf("Failed to generate thumbnail: %v", err)
 				}
 			}
 			fmt.Printf("[%d/%d] Subject with external URL <%s> already exists, skipping...\n", index+1, total, externalURL)
@@ -159,10 +163,15 @@ func importDoubanJSON(filePath string, downloadImage bool) error {
 			}
 			imageFileName := fmt.Sprintf("%s.jpg", uuidStr)
 			imageFilePath := filepath.Join(imageDir, imageFileName)
-			if err := SaveImage(imageURL, imageFilePath, true); err != nil {
+			if err := SaveRemoteImage(imageURL, imageFilePath, true); err != nil {
 				fmt.Printf("Failed to download image: %v\n", err)
 			} else {
 				fmt.Printf("<%s> Cover image downloaded: %s\n", externalURL, imageFilePath)
+			}
+
+			err = GenerateThumbnail(subjectType, uuidStr)
+			if err != nil {
+				fmt.Printf("Failed to generate thumbnail: %v", err)
 			}
 		}
 	}
@@ -219,12 +228,17 @@ func importBangumiJSON(filePath string, downloadImage bool) error {
 				if existingImages[relativeImagePath] {
 					fmt.Printf("Image already exists at %s, skipping download...\n", imageFilePath)
 				} else {
-					if err := SaveImage(imageURL, imageFilePath, true); err != nil {
+					if err := SaveRemoteImage(imageURL, imageFilePath, true); err != nil {
 						fmt.Printf("Failed to download image: %v\n", err)
 					} else {
 						db.Model(&models.Subject{}).Where("external_url = ?", externalURL).Update("has_image", 1)
 						fmt.Printf("Subject with external URL <%s> image updated: %s\n", externalURL, imageFilePath)
 					}
+				}
+
+				err = GenerateThumbnail(subjectType, existingSubject.UUID)
+				if err != nil {
+					fmt.Printf("Failed to generate thumbnail: %v", err)
 				}
 			}
 			fmt.Printf("[%d/%d] Subject with external URL <%s> already exists, skipping...\n", total-i, total, externalURL)
@@ -268,10 +282,15 @@ func importBangumiJSON(filePath string, downloadImage bool) error {
 			}
 			imageFileName := fmt.Sprintf("%s.jpg", uuidStr)
 			imageFilePath := filepath.Join(imageDir, imageFileName)
-			if err := SaveImage(imageURL, imageFilePath, true); err != nil {
+			if err := SaveRemoteImage(imageURL, imageFilePath, true); err != nil {
 				fmt.Printf("Failed to download image: %v\n", err)
 			} else {
 				fmt.Printf("<%s> Cover image downloaded: %s\n", externalURL, imageFilePath)
+			}
+
+			err = GenerateThumbnail(subjectType, uuidStr)
+			if err != nil {
+				fmt.Printf("Failed to generate thumbnail: %v", err)
 			}
 		}
 	}

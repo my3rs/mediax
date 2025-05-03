@@ -6,6 +6,7 @@ require (
 	github.com/glebarez/sqlite v1.11.0
 	github.com/google/uuid v1.6.0
 	golang.org/x/crypto v0.37.0
+	golang.org/x/image v0.26.0
 	gorm.io/gorm v1.25.12
 )
 

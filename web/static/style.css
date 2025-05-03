@@ -707,8 +707,14 @@ a.subject-outlink {
     transform: scale(1);
 }
 
-.add-pre label {
+.add-url {
+    display: flex;
+    align-items: center;
+}
+
+.add-url label {
     flex: unset;
+    font-size: 15px;
     min-width: 65px
 }
 

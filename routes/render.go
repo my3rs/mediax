@@ -81,7 +81,11 @@ func processHomeHTML(subjects []models.SubjectSummary) []models.HomeViewItem {
 	var processedSubjects []models.HomeViewItem
 
 	for _, subject := range subjects {
-		imageURL := getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
+		imageURL := ""
+		if subject.HasImage == 1 {
+			imageURL = getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
+			imageURL = strings.Replace(imageURL, fmt.Sprintf("/%s/", config.ImageDir), fmt.Sprintf("/%s/", config.ThumbnailDir), 1)
+		}
 
 		processedSubjects = append(processedSubjects, models.HomeViewItem{
 			SubjectURL: fmt.Sprintf("/%s/%s", subject.SubjectType, subject.UUID),
@@ -130,7 +134,13 @@ func processCategoryHTML(subjects []models.SubjectSummary) []models.CategoryView
 	var processedSubjects []models.CategoryViewItem
 
 	for _, subject := range subjects {
-		imageURL := getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
+		imageURL := ""
+		if subject.HasImage == 1 {
+			imageURL = getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
+			imageURL = strings.Replace(imageURL, fmt.Sprintf("/%s/", config.ImageDir), fmt.Sprintf("/%s/", config.ThumbnailDir), 1)
+		} else {
+			imageURL = getImageURL(0, subject.HasImage, subject.SubjectType, subject.UUID, "")
+		}
 
 		labels := getSubjectLabel(subject.SubjectType, subject.Status)
 		statusText := labels["statusText"]
