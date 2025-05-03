@@ -40,17 +40,16 @@ func setupRoutes() {
 	cachedStaticHandler := auth.CacheControlMiddleware(staticFileHandler)
 	cachedImageHandler := auth.CacheControlMiddleware(imageFileHandler)
 
-	securedCachedStaticHandler := auth.SecurityHeadersMiddleware(cachedStaticHandler)
-	securedCachedImageHandler := auth.SecurityHeadersMiddleware(cachedImageHandler)
+	securedStaticHandler := auth.SecurityHeadersMiddleware(cachedStaticHandler)
+	securedImageHandler := auth.SecurityHeadersMiddleware(cachedImageHandler)
 
 	// Routes
-	protectedMux.Handle("/static/", securedCachedStaticHandler)
-	protectedMux.Handle("/images/", securedCachedImageHandler)
-
+	http.Handle("/images/", securedImageHandler)
 	http.HandleFunc("/login", handleLogin)
 
-	protectedMux.HandleFunc("/logout", handleLogout)
+	protectedMux.Handle("/static/", securedStaticHandler)
 
+	protectedMux.HandleFunc("/logout", handleLogout)
 	protectedMux.HandleFunc("/", redirectToHome)
 	protectedMux.HandleFunc("/home", handleHomePage)
 	protectedMux.HandleFunc("/book", handleCategory)
