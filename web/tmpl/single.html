@@ -4,13 +4,13 @@
     <div class="subject">
         <h1 class="page-heading">{{ .Subject.Title }}</h1>
         <div class="subject-card">
-            <div class="subject-card-overlay" 
+            <img class="subject-card-overlay"
                 {{ if eq .Subject.HasImage 1 }}
-                    style="background-image: url('{{ .ImageURL }}')"
+                    src="{{ .ThumbURL }}"
                 {{ else }}
-                    style="background-color: var(--highlight-color)"
+                    src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'><rect width='100%' height='100%' fill='%23f2f3f4'/></svg>"
                 {{ end }}
-            ></div>
+            >
             <div class="subject-info">
                 <img class="subject-cover" src='{{ .ImageURL }}' alt="{{ .PageTitle }}">
                 <div class="subject-detail">

@@ -127,6 +127,7 @@ type SubjectView struct {
 	StatusText      string
 	RatingStar      int
 	ImageURL        string
+	ThumbURL        string
 	ExternalURLIcon template.HTML
 	Subject         Subject
 }

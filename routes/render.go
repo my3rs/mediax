@@ -98,6 +98,7 @@ func processHomeHTML(subjects []models.SubjectSummary) []models.HomeViewItem {
 
 func processSingleHTML(pageTitle string, manageType int, subject models.Subject) models.SubjectView {
 	imageURL := getImageURL(manageType, subject.HasImage, subject.SubjectType, subject.UUID, subject.ExternalURL)
+	thumbURL := strings.Replace(imageURL, fmt.Sprintf("/%s/", config.ImageDir), fmt.Sprintf("/%s/", config.ThumbnailDir), 1)
 
 	labels := getSubjectLabel(subject.SubjectType, subject.Status)
 	statusText := labels["statusText"]
@@ -116,6 +117,7 @@ func processSingleHTML(pageTitle string, manageType int, subject models.Subject)
 		StatusText:   statusText,
 		SummaryLabel: summaryLabel,
 		ImageURL:     imageURL,
+		ThumbURL:     thumbURL,
 		Subject:      subject,
 	}
 
