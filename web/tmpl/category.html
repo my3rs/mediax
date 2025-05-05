@@ -105,7 +105,7 @@
             <span class="pagination-disable pagination-text">尾页</span>
             {{ end }}
         </div>
-        <form method="get" class="pagination-jump" style="display: inline;">
+        <form method="get" class="pagination-jump">
             <input type="number" name="page" min="1" max="{{ .TotalPages }}" required autocomplete="off">
             <input type="hidden" name="status" value="{{ .Status }}">
             <input type="hidden" name="sort_by" value="{{ .SortBy }}">

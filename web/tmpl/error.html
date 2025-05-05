@@ -2,15 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error - mediaX</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Error</title>
+    <meta name="author" content="ATP">
+    <style>
+        body{font-family:Arial,sans-serif;background-color:#f5f5f7;color:#333;display:flex;justify-content:center;align-items:flex-start;padding-top:20vh;margin:0;text-align:center;line-height:1.4}.error-box{background-color:#fff;padding:20px 30px;border-radius:30px;box-shadow:0 0 20px rgba(0,0,0,0.05);display:inline-block}.error-box h1{color:#ff7700;font-size:36px;margin:10px}.error-box p{margin:10px}.error-box p.message{font-size:16px;white-space:pre-wrap}.error-box p.tip{font-size:14px;color:#666}.error-box a{display:inline-block;margin:10px;padding:8px 16px;font-size:16px;color:#fff;background-color:#2d8cdc;text-decoration:none;border-radius:8px}
+    </style>
 </head>
-<body style="font-family:Arial,sans-serif;background-color:#f5f5f7;color:#333;display:flex;justify-content:center;align-items:flex-start;padding-top:20vh;margin:0;text-align:center;line-height:1.4">
-    <div style="background-color:#fff;padding:20px 30px;border-radius:30px;box-shadow:0 0 20px rgba(0,0,0,0.05);display:inline-block">
-        <h1 style="color:#ff7700;font-size:36px;margin:10px">Oops!</h1>
-        <p style="font-size:16px;margin:10px;white-space:pre-wrap">Error: {{ .ErrorMessage }}</p>
-        <p style="font-size:14px;color:#666">Please click the button below to go back to <strong>/{{ .TargetPath }}</strong></p>
-        <a href="/{{ .TargetPath }}" style="display:inline-block;margin:10px;padding:8px 16px;font-size:16px;color:#fff;background-color:#2d8cdc;text-decoration:none;border-radius:8px">Go Back</a>
+<body>
+    <div class="error-box">
+        <h1>Oops!</h1>
+        <p class="message">Error: {{ .ErrorMessage }}</p>
+        <p class="tip">Please click the button below to go back to <strong>/{{ .TargetPath }}</strong></p>
+        <a href="/{{ .TargetPath }}">Go Back</a>
     </div>
 </body>
 </html>

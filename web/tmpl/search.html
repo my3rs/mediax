@@ -9,7 +9,7 @@
             <a class="subject-list-cover search-cover" href="{{ .SubjectURL }}"><img class="subject-list-image" src="{{ .ImageURL }}" alt="{{ .Title }}" loading="lazy"></a>
             <div class="subject-list-info">
                 <h3 class="subject-list-title">
-                    <span style="color:var(--sec-note-color)">[{{ .SubjectType }}]</span>
+                    <span>[{{ .SubjectType }}]</span>
                     <a href="{{ .SubjectURL }}">{{ .Title }}</a>
                     {{ with .AltTitle }}
                     <span class="note-color subject-list-alttitle">{{ . }}</span>
@@ -71,7 +71,7 @@
             <span class="pagination-disable pagination-text">尾页</span>
             {{ end }}
         </div>
-        <form method="get" class="pagination-jump" style="display: inline;">
+        <form method="get" class="pagination-jump">
             <input type="number" name="page" min="1" max="{{ .TotalPages }}" required autocomplete="off">
             <input type="hidden" name="q" value="{{ .Query }}">
             <input type="hidden" name="subject_type" value="{{ .QueryType }}">

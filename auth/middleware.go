@@ -17,7 +17,7 @@ func SecurityHeadersMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("X-Frame-Options", "DENY")
-		w.Header().Set("Content-Security-Policy", "default-src 'self'; form-action 'self'; img-src 'self' data: https:; script-src 'sha256-osjxnKEPL/pQJbFk1dKsF7PYFmTyMWGmVSiL9inhxJY=' 'unsafe-hashes'; style-src 'self' 'unsafe-inline';")
+		w.Header().Set("Content-Security-Policy", "default-src 'self'; form-action 'self'; img-src 'self' data: https:; script-src 'sha256-osjxnKEPL/pQJbFk1dKsF7PYFmTyMWGmVSiL9inhxJY=' 'unsafe-hashes'; style-src 'self';")
 		next.ServeHTTP(w, r)
 	})
 }
