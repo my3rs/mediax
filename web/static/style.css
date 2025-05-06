@@ -518,6 +518,10 @@ main {
     line-height: 1.5
 }
 
+.subject-card p:last-child {
+    margin-bottom: 0
+}
+
 .subject-card label,
 .subject-card span {
     vertical-align: middle
@@ -546,7 +550,7 @@ main {
 
 .subject-info {
     display: flex;
-    gap: 40px;
+    gap: 36px;
     padding: 40px;
     word-break: break-all;
     background-color: rgba(33, 33, 33, .33);
@@ -555,14 +559,21 @@ main {
 }
 
 .subject-cover {
-    width: auto;
-    height: 260px;
+    flex: 0 0 180px;
+    height: 270px;
     border-radius: var(--border-radius-normal);
-    box-shadow: var(--box-shadow-card)
+    box-shadow: var(--box-shadow-card);
+    overflow: hidden
+}
+
+.subject-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover
 }
 
 .subject-detail {
-    width: 100%
+    flex: 1 1 auto
 }
 
 a.subject-outlink {
@@ -1047,6 +1058,11 @@ a.subject-outlink {
         width: unset
     }
 
+    .subject-cover {
+        flex: 0 0 160px;
+        height: 240px
+    }
+
     .subject-intro,
     .subject-manage {
         padding: 0 10px
@@ -1069,8 +1085,13 @@ a.subject-outlink {
     }
 
     .subject-cover {
-        margin: auto;
-        height: 240px
+        margin: 5px auto 0;
+        flex: auto;
+        height: 222px
+    }
+
+    .subject-cover img {
+        width: auto
     }
 
     .add-list {

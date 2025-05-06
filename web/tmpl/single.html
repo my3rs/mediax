@@ -12,7 +12,9 @@
                 {{ end }}
             >
             <div class="subject-info">
-                <img class="subject-cover" src='{{ .ImageURL }}' alt="{{ .PageTitle }}">
+                <div class="subject-cover">
+                    <img src='{{ .ImageURL }}' alt="{{ .PageTitle }}">
+                </div>
                 <div class="subject-detail">
                     {{ with .Subject.AltTitle }}
                     <h2>{{ . }}</h2>
