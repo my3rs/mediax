@@ -922,17 +922,10 @@ a.subject-outlink {
 
 .search-select {
     min-width: 40px;
-    visibility: hidden;
-    opacity: 0;
 }
 
 .sort-select {
     min-width: 70px;
-}
-
-.search-bar:hover .search-select {
-    visibility: visible;
-    opacity: 1;
 }
 
 .search-select:focus {
