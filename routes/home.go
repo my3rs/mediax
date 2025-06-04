@@ -19,9 +19,22 @@ func redirectToHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleHomePage(w http.ResponseWriter, r *http.Request) {
-	now := time.Now()
-	weekdays := [...]string{"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"}
-	today := fmt.Sprintf("%d月%d日 %s", now.Month(), now.Day(), weekdays[now.Weekday()])
+	hour := time.Now().Hour()
+	var greeting string
+	switch {
+	case hour >= 5 && hour < 9:
+		greeting = "早上好"
+	case hour >= 9 && hour < 12:
+		greeting = "上午好"
+	case hour >= 12 && hour < 14:
+		greeting = "中午好"
+	case hour >= 14 && hour < 18:
+		greeting = "下午好"
+	case hour >= 18 && hour < 24:
+		greeting = "晚上好"
+	default:
+		greeting = "深夜好"
+	}
 
 	recentSubjects, err := handlers.GetRecentSubjects(5)
 	if err != nil {
@@ -48,7 +61,7 @@ func handleHomePage(w http.ResponseWriter, r *http.Request) {
 
 	data := models.HomeView{
 		Header:       helpers.GetHeader("home"),
-		Today:        today,
+		TimePeriod:   greeting,
 		PageTitle:    "主页",
 		RecentGroups: recentGroups,
 	}

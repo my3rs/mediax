@@ -48,7 +48,7 @@ type HomeViewType struct {
 
 type HomeView struct {
 	Header       Header
-	Today        string
+	TimePeriod   string
 	PageTitle    string
 	RecentGroups []HomeViewType
 }
