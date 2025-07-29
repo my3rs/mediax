@@ -116,7 +116,7 @@ func importDoubanJSON(filePath string, downloadImage bool) error {
 						fmt.Printf("Subject with external URL <%s> image updated: %s\n", externalURL, imageFilePath)
 					}
 				}
-				err = GenerateThumbnail(subjectType, existingSubject.UUID)
+				err = GenerateThumbnail(subjectType, existingSubject.UUID, false)
 				if err != nil {
 					fmt.Printf("Failed to generate thumbnail: %v", err)
 				}
@@ -169,7 +169,7 @@ func importDoubanJSON(filePath string, downloadImage bool) error {
 				fmt.Printf("<%s> Cover image downloaded: %s\n", externalURL, imageFilePath)
 			}
 
-			err = GenerateThumbnail(subjectType, uuidStr)
+			err = GenerateThumbnail(subjectType, uuidStr, false)
 			if err != nil {
 				fmt.Printf("Failed to generate thumbnail: %v", err)
 			}
@@ -236,7 +236,7 @@ func importBangumiJSON(filePath string, downloadImage bool) error {
 					}
 				}
 
-				err = GenerateThumbnail(subjectType, existingSubject.UUID)
+				err = GenerateThumbnail(subjectType, existingSubject.UUID, false)
 				if err != nil {
 					fmt.Printf("Failed to generate thumbnail: %v", err)
 				}
@@ -288,7 +288,7 @@ func importBangumiJSON(filePath string, downloadImage bool) error {
 				fmt.Printf("<%s> Cover image downloaded: %s\n", externalURL, imageFilePath)
 			}
 
-			err = GenerateThumbnail(subjectType, uuidStr)
+			err = GenerateThumbnail(subjectType, uuidStr, false)
 			if err != nil {
 				fmt.Printf("Failed to generate thumbnail: %v", err)
 			}

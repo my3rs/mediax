@@ -89,7 +89,7 @@ func SaveUploadedImage(file io.Reader, subjectType, uuidStr string) error {
 		return fmt.Errorf("encoding image to JPEG and saving to %s: %w", targetPath, err)
 	}
 
-	err = GenerateThumbnail(subjectType, uuidStr)
+	err = GenerateThumbnail(subjectType, uuidStr, true)
 	if err != nil {
 		log.Printf("Error: %v", err)
 	}
@@ -226,13 +226,13 @@ func MovePreDownloadedImage(subjectType, externalURL, uuidStr string) {
 		return
 	}
 
-	err = GenerateThumbnail(subjectType, uuidStr)
+	err = GenerateThumbnail(subjectType, uuidStr, true)
 	if err != nil {
 		log.Printf("Error: %v", err)
 	}
 }
 
-func GenerateThumbnail(subjectType, uuid string) error {
+func GenerateThumbnail(subjectType, uuid string, force bool) error {
 	originalFileName := uuid + ".jpg"
 	originalPath := filepath.Join(config.ImageDir, subjectType, originalFileName)
 
@@ -240,10 +240,12 @@ func GenerateThumbnail(subjectType, uuid string) error {
 	thumbnailDir := filepath.Join(config.ThumbnailDir, subjectType)
 	thumbnailPath := filepath.Join(thumbnailDir, thumbnailFileName)
 
-	if _, err := os.Stat(thumbnailPath); err == nil {
-		return nil
-	} else if !os.IsNotExist(err) {
-		return fmt.Errorf("checking thumbnail existence %s: %w", thumbnailPath, err)
+	if !force {
+		if _, err := os.Stat(thumbnailPath); err == nil {
+			return nil
+		} else if !os.IsNotExist(err) {
+			return fmt.Errorf("checking thumbnail existence %s: %w", thumbnailPath, err)
+		}
 	}
 
 	originalFile, err := os.Open(originalPath)
@@ -314,7 +316,7 @@ func GenerateThumbnailFlag() {
 	errorCount := 0
 
 	for _, subject := range subjects {
-		err := GenerateThumbnail(subject.SubjectType, subject.UUID)
+		err := GenerateThumbnail(subject.SubjectType, subject.UUID, false)
 		if err != nil {
 			log.Printf("Error generating thumbnail for %s/%s: %v", subject.SubjectType, subject.UUID, err)
 			errorCount++
