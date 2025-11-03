@@ -14,7 +14,13 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/home", http.StatusFound)
 			return
 		}
-		renderLogin(w, nil)
+		// Pass Kanidm configuration to template
+		data := struct {
+			KanidmEnabled bool
+		}{
+			KanidmEnabled: auth.IsKanidmEnabled(),
+		}
+		renderLogin(w, data)
 	} else if r.Method == http.MethodPost {
 		r.ParseForm()
 		username := r.FormValue("username")

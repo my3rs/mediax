@@ -47,6 +47,10 @@ func setupRoutes() {
 	http.Handle("/images/", securedImageHandler)
 	http.HandleFunc("/login", handleLogin)
 
+	// Kanidm OAuth2 routes (public, not behind auth middleware)
+	http.HandleFunc("/auth/kanidm/login", handleKanidmLogin)
+	http.HandleFunc("/auth/kanidm/callback", handleKanidmCallback)
+
 	protectedMux.Handle("/static/", securedStaticHandler)
 
 	protectedMux.HandleFunc("/logout", handleLogout)

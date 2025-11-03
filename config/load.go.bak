@@ -122,9 +122,8 @@ func LoadConfig(path string) error {
 		if cfg.Kanidm.ClientID == "" {
 			return errors.New("kanidm.client_id must be set when Kanidm is enabled")
 		}
-		// client_secret is optional - public clients (like dev environment) dont need it
 		if cfg.Kanidm.ClientSecret == "" {
-			fmt.Println("Warning: Kanidm client_secret is empty. Using public client mode.")
+			return errors.New("kanidm.client_secret must be set when Kanidm is enabled")
 		}
 		// redirect_url is required for OAuth2 callback
 		if cfg.Kanidm.RedirectURL == "" {

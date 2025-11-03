@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 
+	"github.com/scenery/mediax/auth"
 	"github.com/scenery/mediax/version"
 	"github.com/scenery/mediax/web"
 )
@@ -19,6 +20,12 @@ var (
 func Init() {
 	funcMap = createFuncMap()
 	initBaseTemplates()
+
+	// Initialize Kanidm OAuth2/OIDC if enabled
+	if err := auth.InitKanidm(); err != nil {
+		log.Fatalf("Failed to initialize Kanidm: %v", err)
+	}
+
 	setupRoutes()
 }
 
